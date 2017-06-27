@@ -185,6 +185,7 @@ func testAccCheckRancherRegistrationTokenDestroy(s *terraform.State) error {
 const testAccRancherRegistrationTokenConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_registration_token" "foo" {
@@ -197,6 +198,7 @@ resource "rancher_registration_token" "foo" {
 const testAccRancherRegistrationTokenUpdateConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_registration_token" "foo" {

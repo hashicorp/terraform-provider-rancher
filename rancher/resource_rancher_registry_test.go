@@ -187,6 +187,7 @@ const testAccRancherRegistryConfig = `
 resource "rancher_environment" "foo_registry" {
 	name = "registry test"
 	description = "environment to test registries"
+	orchestration = "cattle"
 }
 
 resource "rancher_registry" "foo" {
@@ -201,6 +202,7 @@ const testAccRancherRegistryUpdateConfig = `
  resource "rancher_environment" "foo_registry" {
    name = "registry test"
    description = "environment to test registries"
+   orchestration = "cattle"
  }
 
  resource "rancher_registry" "foo" {
@@ -215,6 +217,7 @@ const testAccRancherRegistryRecreateConfig = `
  resource "rancher_environment" "foo_registry" {
    name = "registry test"
    description = "environment to test registries"
+   orchestration = "cattle"
  }
 
  resource "rancher_environment" "foo_registry2" {

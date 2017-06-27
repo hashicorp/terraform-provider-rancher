@@ -246,6 +246,7 @@ func testAccCheckRancherStackDestroy(s *terraform.State) error {
 const testAccRancherStackConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_stack" "foo" {
@@ -258,6 +259,7 @@ resource "rancher_stack" "foo" {
 const testAccRancherStackUpdateConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_stack" "foo" {
@@ -270,6 +272,7 @@ resource "rancher_stack" "foo" {
 const testAccRancherStackComposeConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_stack" "compose" {

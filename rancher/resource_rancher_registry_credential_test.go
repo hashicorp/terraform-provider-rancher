@@ -177,6 +177,7 @@ func testAccCheckRancherRegistryCredentialDestroy(s *terraform.State) error {
 const testAccRancherRegistryCredentialConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_registry" "foo" {
@@ -199,6 +200,7 @@ resource "rancher_registry_credential" "foo" {
 const testAccRancherRegistryCredentialUpdateConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
+	orchestration = "cattle"
 }
 
 resource "rancher_registry" "foo" {
