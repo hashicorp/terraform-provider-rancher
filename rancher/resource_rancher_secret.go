@@ -1,6 +1,7 @@
 package rancher
 
 import (
+	"encoding/base64"
 	"fmt"
 	"log"
 	"time"
@@ -61,7 +62,7 @@ func resourceRancherSecretCreate(d *schema.ResourceData, meta interface{}) error
 	secret := rancher.Secret{
 		Name:        name,
 		Description: description,
-		Value:       value,
+		Value:       base64.StdEncoding.EncodeToString([]byte(value)),
 	}
 	newSecret, err := client.Secret.Create(&secret)
 	if err != nil {
@@ -127,7 +128,7 @@ func resourceRancherSecretUpdate(d *schema.ResourceData, meta interface{}) error
 	data := map[string]interface{}{
 		"name":        &name,
 		"description": &description,
-		"value":       &value,
+		"value":       base64.StdEncoding.EncodeToString([]byte(value)),
 	}
 
 	var newSecret rancher.Secret
