@@ -27,8 +27,8 @@ resource rancher_certificate "foo" {
 
 The following arguments are supported:
 
-* `name` - (Required) The name of the registry credential.
-* `description` - (Optional) A registry credential description.
+* `name` - (Required) The name of the certificate.
+* `description` - (Optional) A certificate description.
 * `environment_id` - (Required) The ID of the environment to create the certificate for.
 * `cert` - (Required) The certificate content.
 * `cert_chain` - (Optional) The certificate chain.
@@ -51,11 +51,11 @@ The following attributes are exported:
 
 ## Import
 
-Registry credentials can be imported using the Registry and credentials
-IDs in the format `<environment_id>/<certificate_id>`
+Certificates can be imported using the Certificate ID
+in the format `<environment_id>/<certificate_id>`
 
 ```
-$ terraform import rancher_certificate.mycert 1sp31/1c605
+$ terraform import rancher_certificate.mycert 1a5/1c605
 ```
 
 If the credentials for the Rancher provider have access to the global API,
