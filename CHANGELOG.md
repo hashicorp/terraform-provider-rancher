@@ -2,10 +2,8 @@
 
 BUG FIXES:
 
-* Add orchestration parameter to fix acceptance tests
-  [#10](https://github.com/terraform-providers/terraform-provider-rancher/pull/10)
-* Fix rancher_certificate doc
-  [#12](https://github.com/terraform-providers/terraform-provider-rancher/pull/12)
+* tests: Add orchestration parameter to fix acceptance tests [GH-10]
+* resource/rancher_certificate: fix doc [GH-12]
 
 ## 0.1.0 (June 21, 2017)
 
