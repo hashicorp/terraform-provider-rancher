@@ -60,6 +60,10 @@ func Provider() terraform.ResourceProvider {
 			"rancher_stack":               resourceRancherStack(),
 		},
 
+		DataSourcesMap: map[string]*schema.Resource{
+			"rancher_setting": dataSourceRancherSetting(),
+		},
+
 		ConfigureFunc: providerConfigure,
 	}
 }
