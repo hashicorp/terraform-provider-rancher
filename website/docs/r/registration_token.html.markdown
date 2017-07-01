@@ -40,6 +40,8 @@ The following arguments are supported:
 
 The following attributes are exported:
 
+* `id` - (Computed) The ID of the resource.
+* `image` - (Computed)
 * `command` - The command used to start a rancher agent for this environment.
 * `registration_url` - The URL to use to register new nodes to the environment.
 * `token` - The token to use to register new nodes to the environment.
