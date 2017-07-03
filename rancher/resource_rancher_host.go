@@ -65,24 +65,42 @@ func resourceRancherHostCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	hosts, _ := client.Host.List(NewListOpts())
 	hostname := d.Get("hostname").(string)
-	var host rancher.Host
 
-	for _, h := range hosts.Data {
-		if h.Hostname == hostname {
-			host = h
-			break
-		}
+	stateConf := &resource.StateChangeConf{
+		Pending:    []string{"active", "removed", "removing", "not found"},
+		Target:     []string{"active", "disconnected"},
+		Refresh:    findHost(client, hostname),
+		Timeout:    10 * time.Minute,
+		Delay:      1 * time.Second,
+		MinTimeout: 3 * time.Second,
+	}
+	host, waitErr := stateConf.WaitForState()
+	if waitErr != nil {
+		return fmt.Errorf(
+			"Error waiting for host (%s) to be found: %s", hostname, waitErr)
 	}
 
-	if host.Hostname == "" {
-		return fmt.Errorf("Failed to find host %s", hostname)
-	}
-
-	d.SetId(host.Id)
+	d.SetId(host.(rancher.Host).Id)
 
 	return resourceRancherHostUpdate(d, meta)
+}
+
+func findHost(client *rancher.RancherClient, hostname string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+
+		hosts, _ := client.Host.List(NewListOpts())
+		var host rancher.Host
+
+		for _, h := range hosts.Data {
+			if h.Hostname == hostname {
+				host = h
+				return host, host.State, nil
+			}
+		}
+
+		return nil, "not found", nil
+	}
 }
 
 func resourceRancherHostRead(d *schema.ResourceData, meta interface{}) error {
