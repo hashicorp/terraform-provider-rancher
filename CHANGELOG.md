@@ -10,6 +10,7 @@ BUG FIXES:
 * tests: Add orchestration parameter to fix acceptance tests [GH-10]
 * resource/rancher_certificate: fix doc [GH-12]
 * resource/rancher_environment: fix members casting when creating [GH-18]
+* resource/rancher_host: wait for host to be created [GH-17]
 * fix missing attributes in doc [GH-16]
 
 ## 0.1.0 (June 21, 2017)
