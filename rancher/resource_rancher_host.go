@@ -172,6 +172,29 @@ func resourceRancherHostDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	if host.State != "inactive" {
+		if _, err := client.Host.ActionDeactivate(host); err != nil {
+			return fmt.Errorf("Error deactivating Host: %s", err)
+		}
+
+		log.Printf("[DEBUG] Waiting for host (%s) to be deactivated", id)
+
+		stateConf := &resource.StateChangeConf{
+			Pending:    []string{"active", "inactive", "deactivating"},
+			Target:     []string{"inactive"},
+			Refresh:    HostStateRefreshFunc(client, id),
+			Timeout:    10 * time.Minute,
+			Delay:      1 * time.Second,
+			MinTimeout: 3 * time.Second,
+		}
+
+		_, waitErr := stateConf.WaitForState()
+		if waitErr != nil {
+			return fmt.Errorf(
+				"Error waiting for host (%s) to be removed: %s", id, waitErr)
+		}
+	}
+
 	if err := client.Host.Delete(host); err != nil {
 		return fmt.Errorf("Error deleting Host: %s", err)
 	}
@@ -179,7 +202,7 @@ func resourceRancherHostDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Waiting for host (%s) to be removed", id)
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"active", "removed", "removing"},
+		Pending:    []string{"inactive", "removed", "removing"},
 		Target:     []string{"removed"},
 		Refresh:    HostStateRefreshFunc(client, id),
 		Timeout:    10 * time.Minute,
