@@ -33,7 +33,7 @@ The following arguments are supported:
 
 ## Attributes Reference
 
-No further attributes are exported.
+* `id` - (Computed) The ID of the resource.
 
 ## Import
 

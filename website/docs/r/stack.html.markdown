@@ -52,6 +52,7 @@ The following arguments are supported:
 
 The following attributes are exported:
 
+* `id` - (Computed) The ID of the resource.
 * `rendered_docker_compose` - The interpolated `docker_compose` applied to the stack.
 * `rendered_rancher_compose` - The interpolated `rancher_compose` applied to the stack.
 

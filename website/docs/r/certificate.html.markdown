@@ -38,6 +38,7 @@ The following arguments are supported:
 
 The following attributes are exported:
 
+* `id` - (Computed) The ID of the resource.
 * `cn` - The certificate CN.
 * `algorithm` - The certificate algorithm.
 * `cert_fingerprint` - The certificate fingerprint.

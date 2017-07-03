@@ -29,6 +29,7 @@ resource rancher_host "foo" {
 
 The following arguments are supported:
 
+* `id` - (Computed) The ID of the resource.
 * `name` - (Required) The name of the host.
 * `description` - (Optional) A host description.
 * `environment_id` - (Required) The ID of the environment the host is associated to.
