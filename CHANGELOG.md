@@ -11,6 +11,7 @@ BUG FIXES:
 * resource/rancher_certificate: fix doc [GH-12]
 * resource/rancher_environment: fix members casting when creating [GH-18]
 * resource/rancher_host: wait for host to be created [GH-17]
+* resource/rancher_host: deactivate host before deleting it [GH-20]
 * fix missing attributes in doc [GH-16]
 
 ## 0.1.0 (June 21, 2017)
