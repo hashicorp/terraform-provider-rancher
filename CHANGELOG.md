@@ -8,6 +8,7 @@ BUG FIXES:
 
 * tests: Add orchestration parameter to fix acceptance tests [GH-10]
 * resource/rancher_certificate: fix doc [GH-12]
+* fix missing attributes in doc [GH-16]
 
 ## 0.1.0 (June 21, 2017)
 
