@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Data Source**: `rancher_setting` [GH-13]
+* **New Resource:** `rancher_secret` [GH-11]
 
 BUG FIXES:
 
