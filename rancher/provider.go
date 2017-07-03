@@ -57,6 +57,7 @@ func Provider() terraform.ResourceProvider {
 			"rancher_registration_token":  resourceRancherRegistrationToken(),
 			"rancher_registry":            resourceRancherRegistry(),
 			"rancher_registry_credential": resourceRancherRegistryCredential(),
+			"rancher_secret":              resourceRancherSecret(),
 			"rancher_stack":               resourceRancherStack(),
 		},
 
