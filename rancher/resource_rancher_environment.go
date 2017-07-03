@@ -135,7 +135,7 @@ func resourceRancherEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 		if err != nil {
 			return err
 		}
-		members := makeProjectMembers(v.([]interface{}))
+		members := makeProjectMembers(v.(*schema.Set).List())
 		_, err = envClient.Project.ActionSetmembers(&newEnv, &rancherClient.SetProjectMembersInput{
 			Members: members,
 		})
