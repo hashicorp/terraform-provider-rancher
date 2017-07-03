@@ -1,5 +1,9 @@
 ## 0.1.1 (Unreleased)
 
+FEATURES:
+
+* **New Data Source**: `rancher_setting` [GH-13]
+
 BUG FIXES:
 
 * tests: Add orchestration parameter to fix acceptance tests [GH-10]
