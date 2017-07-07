@@ -1,4 +1,9 @@
 ## 0.1.2 (Unreleased)
+
+BUG FIXES:
+
+* resource/rancher_stack: wait when stack is in 'upgrading' state [GH-21]
+
 ## 0.1.1 (July 04, 2017)
 
 FEATURES:
