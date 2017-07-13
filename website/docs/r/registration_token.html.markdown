@@ -18,6 +18,7 @@ resource "rancher_registration_token" "default" {
   name           = "staging_token"
   description    = "Registration token for the staging environment"
   environment_id = "${rancher_environment.default.id}"
+  agent_ip       = "1.2.3.4"
 
   host_labels    {
     orchestration = true,
@@ -35,6 +36,7 @@ The following arguments are supported:
 * `description` - (Optional) A registration token description.
 * `environment_id` - (Required) The ID of the environment to create the token for.
 * `host_labels` - (Optional) A map of host labels to add to the registration command.
+* `agent_ip` - (Optional) A string containing the CATTLE_AGENT_IP to add to the registration command.
 
 ## Attributes Reference
 
