@@ -80,3 +80,20 @@ func addHostLabels(command string, labels map[string]interface{}) string {
 
 	return strings.Join(result, " ")
 }
+
+func addAgentIp(command string, ip string) string {
+	result := []string{}
+
+	if ip == "" {
+		return command
+	}
+
+	tokenizedCommand := strings.Split(command, " ")
+	if len(tokenizedCommand) > 0 {
+		result = append(result, tokenizedCommand[:3]...)
+		result = append(result, "-e", fmt.Sprintf("CATTLE_AGENT_IP='%s'", ip))
+		result = append(result, tokenizedCommand[3:]...)
+	}
+
+	return strings.Join(result, " ")
+}
