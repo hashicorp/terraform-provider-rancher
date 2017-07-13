@@ -2,6 +2,7 @@
 
 BUG FIXES:
 
+* resource/rancher_registration_token: add 'agent_ip' argument [GH-23]
 * resource/rancher_stack: wait when stack is in 'upgrading' state [GH-21]
 * resource/rancher_stack: wait when stack is in 'registering' state [GH-22]
 
