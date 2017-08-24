@@ -1,14 +1,14 @@
-## 0.2.0 (Unreleased)
+## 0.2.0 (August 24, 2017)
 
 IMPROVEMENTS:
 
-* resource/rancher_registration_token: add 'agent_ip' argument [GH-23]
+* resource/rancher_registration_token: add 'agent_ip' argument ([#23](https://github.com/terraform-providers/terraform-provider-rancher/issues/23))
 
 BUG FIXES:
 
-* resource/rancher_environment: fix setting membership on creation [GH-29]
-* resource/rancher_stack: wait when stack is in 'upgrading' state [GH-21]
-* resource/rancher_stack: wait when stack is in 'registering' state [GH-22]
+* resource/rancher_environment: fix setting membership on creation ([#29](https://github.com/terraform-providers/terraform-provider-rancher/issues/29))
+* resource/rancher_stack: wait when stack is in 'upgrading' state ([#21](https://github.com/terraform-providers/terraform-provider-rancher/issues/21))
+* resource/rancher_stack: wait when stack is in 'registering' state ([#22](https://github.com/terraform-providers/terraform-provider-rancher/issues/22))
 
 ## 0.1.1 (July 04, 2017)
 
