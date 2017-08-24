@@ -6,6 +6,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 
+* resource/rancher_environment: fix setting membership on creation [GH-29]
 * resource/rancher_stack: wait when stack is in 'upgrading' state [GH-21]
 * resource/rancher_stack: wait when stack is in 'registering' state [GH-22]
 
