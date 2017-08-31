@@ -1,4 +1,9 @@
 ## 0.2.1 (Unreleased)
+
+BUG FIXES:
+
+* resource/rancher_host: wait when host is in 'activating' state [GH-31]
+
 ## 0.2.0 (August 24, 2017)
 
 IMPROVEMENTS:
