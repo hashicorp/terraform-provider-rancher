@@ -131,7 +131,7 @@ func resourceRancherEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 	d.SetId(newEnv.Id)
 	log.Printf("[INFO] Environment ID: %s", d.Id())
 
-	return resourceRancherEnvironmentUpdate(d, meta)
+	return resourceRancherEnvironmentCreateOrUpdateProjectMembers(d, meta)
 }
 
 func resourceRancherEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
@@ -202,20 +202,7 @@ func resourceRancherEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	// Update members
-	envClient, err := meta.(*Config).EnvironmentClient(d.Id())
-	if err != nil {
-		return err
-	}
-	members := d.Get("member").(*schema.Set).List()
-	_, err = envClient.Project.ActionSetmembers(&newEnv, &rancherClient.SetProjectMembersInput{
-		Members: makeProjectMembers(members),
-	})
-	if err != nil {
-		return err
-	}
-
-	return resourceRancherEnvironmentRead(d, meta)
+	return resourceRancherEnvironmentCreateOrUpdateProjectMembers(d, meta)
 }
 
 func resourceRancherEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
@@ -254,6 +241,35 @@ func resourceRancherEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 
 	d.SetId("")
 	return nil
+}
+
+func resourceRancherEnvironmentCreateOrUpdateProjectMembers(d *schema.ResourceData, meta interface{}) error {
+	client, err := meta.(*Config).GlobalClient()
+	if err != nil {
+		return err
+	}
+
+	env, err := client.Project.ById(d.Id())
+	if err != nil {
+		return err
+	}
+
+	// Create or Update members
+	envClient, err := meta.(*Config).EnvironmentClient(d.Id())
+	if err != nil {
+		return err
+	}
+	members := d.Get("member").(*schema.Set).List()
+	log.Printf("[INFO] Create or Update Project Members: %v", makeProjectMembers(members))
+	if members != nil && len(members) > 0 {
+		_, err = envClient.Project.ActionSetmembers(env, &rancherClient.SetProjectMembersInput{
+			Members: makeProjectMembers(members),
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return resourceRancherEnvironmentRead(d, meta)
 }
 
 func getProjectTemplateID(orchestration, templateID string) (string, error) {
