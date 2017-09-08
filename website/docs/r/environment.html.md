@@ -39,8 +39,8 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the environment.
 * `description` - (Optional) An environment description.
-* `orchestration` - (Optional) Must be one of **cattle**, **swarm**, **mesos**, **windows** or **kubernetes**. This is a helper for setting the project_template_ids for the included Rancher templates. This will conflict with project_template_id setting.
-* `project_template_id` - (Optional) This can be any valid project template ID. If this is set, then orchestration can not be. 
+* `orchestration` - (Optional) Must be one of **cattle**, **swarm**, **mesos**, **windows** or **kubernetes**. This is a helper for setting the project_template_ids for the included Rancher templates. This will conflict with project_template_id setting. Changing this forces a new resource to be created.
+* `project_template_id` - (Optional) This can be any valid project template ID. If this is set, then orchestration can not be. Changing this forces a new resource to be created.
 * `member` - (Optional) Members to add to the environment.
 
 ### Member Parameters Reference
