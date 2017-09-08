@@ -46,12 +46,14 @@ func resourceRancherEnvironment() *schema.Resource {
 				ValidateFunc:  validation.StringInSlice([]string{"cattle", "kubernetes", "mesos", "swarm", "windows"}, true),
 				Computed:      true,
 				ConflictsWith: []string{"project_template_id"},
+				ForceNew:      true,
 			},
 			"project_template_id": &schema.Schema{
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
 				ConflictsWith: []string{"orchestration"},
+				ForceNew:      true,
 			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
@@ -184,18 +186,10 @@ func resourceRancherEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 
 	name := d.Get("name").(string)
 	description := d.Get("description").(string)
-	orchestration := d.Get("orchestration").(string)
-	projectTemplateID := d.Get("project_template_id").(string)
-
-	projectTemplateID, err = getProjectTemplateID(orchestration, projectTemplateID)
-	if err != nil {
-		return err
-	}
 
 	data := map[string]interface{}{
-		"name":                &name,
-		"description":         &description,
-		"project_template_id": &projectTemplateID,
+		"name":        &name,
+		"description": &description,
 	}
 
 	var newEnv rancherClient.Project
