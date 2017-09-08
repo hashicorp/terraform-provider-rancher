@@ -84,7 +84,7 @@ func TestAccRancherEnvironment_members(t *testing.T) {
 					testAccCheckRancherEnvironmentExists("rancher_environment.foo", &environment),
 					resource.TestCheckResourceAttr("rancher_environment.foo", "name", "foo2"),
 					resource.TestCheckResourceAttr("rancher_environment.foo", "description", "Terraform acc test group - updated"),
-					resource.TestCheckResourceAttr("rancher_environment.foo", "orchestration", "swarm"),
+					resource.TestCheckResourceAttr("rancher_environment.foo", "orchestration", "cattle"),
 					resource.TestCheckResourceAttr("rancher_environment.foo", "member.#", "1"),
 				),
 			},
@@ -213,8 +213,8 @@ resource "rancher_environment" "foo" {
 
 const testAccRancherEnvironmentMembersUpdateConfig = `
 resource "rancher_environment" "foo" {
-	name = "foo"
-	description = "Terraform acc test group"
+	name = "foo2"
+	description = "Terraform acc test group - updated"
 	orchestration = "cattle"
 
 	member {
@@ -222,6 +222,7 @@ resource "rancher_environment" "foo" {
 		external_id_type = "github_user"
 		role = "owner"
 	}
+}
 `
 
 const testAccRancherInvalidEnvironmentConfig = `
