@@ -171,8 +171,10 @@ func resourceRancherEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	}
 
 	members, _ := envClient.ProjectMember.List(NewListOpts())
-
-	d.Set("member", normalizeMembers(members.Data))
+	normalizedMembers := normalizeMembers(members.Data)
+	if len(normalizedMembers) > 0 {
+		d.Set("member", normalizedMembers)
+	}
 	return nil
 }
 
