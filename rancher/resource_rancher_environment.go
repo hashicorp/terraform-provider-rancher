@@ -131,7 +131,7 @@ func resourceRancherEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 	d.SetId(newEnv.Id)
 	log.Printf("[INFO] Environment ID: %s", d.Id())
 
-	return resourceRancherEnvironmentCreateOrUpdateProjectMembers(d, meta)
+	return projectMembersCreateOrUpdate(d, meta)
 }
 
 func resourceRancherEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
@@ -204,7 +204,7 @@ func resourceRancherEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	return resourceRancherEnvironmentCreateOrUpdateProjectMembers(d, meta)
+	return projectMembersCreateOrUpdate(d, meta)
 }
 
 func resourceRancherEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
@@ -245,7 +245,7 @@ func resourceRancherEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
-func resourceRancherEnvironmentCreateOrUpdateProjectMembers(d *schema.ResourceData, meta interface{}) error {
+func projectMembersCreateOrUpdate(d *schema.ResourceData, meta interface{}) error {
 	client, err := meta.(*Config).GlobalClient()
 	if err != nil {
 		return err
