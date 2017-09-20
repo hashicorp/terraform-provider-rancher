@@ -1,17 +1,17 @@
-## 1.0.0 (Unreleased)
+## 1.0.0 (September 20, 2017)
 
 IMPROVEMENTS:
 
-* resource/rancher_stack: improve error messages [GH-40]
+* resource/rancher_stack: improve error messages ([#40](https://github.com/terraform-providers/terraform-provider-rancher/issues/40))
 
 BUG FIXES:
 
-* resource/rancher_host: wait when host is in 'activating' state [GH-31]
+* resource/rancher_host: wait when host is in 'activating' state ([#31](https://github.com/terraform-providers/terraform-provider-rancher/issues/31))
 * resource/rancher_environment: fix member creation and orchestration update
-  [GH-37]
-* resource/rancher_stack: get system scope from API [GH-39]
+  ([#37](https://github.com/terraform-providers/terraform-provider-rancher/issues/37))
+* resource/rancher_stack: get system scope from API ([#39](https://github.com/terraform-providers/terraform-provider-rancher/issues/39))
 * resource/rancher_stack: use all valid suffixes to retrieve catalog template
-  files [GH-41]
+  files ([#41](https://github.com/terraform-providers/terraform-provider-rancher/issues/41))
 
 ## 0.2.0 (August 24, 2017)
 
