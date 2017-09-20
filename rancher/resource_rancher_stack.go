@@ -415,8 +415,14 @@ func makeStackData(d *schema.ResourceData, meta interface{}) (data map[string]in
 			return data, fmt.Errorf("Did not find template %s", catalogID)
 		}
 
-		dockerCompose = templateVersion.Files["docker-compose.yml"].(string)
-		rancherCompose = templateVersion.Files["rancher-compose.yml"].(string)
+		dockerCompose, err = getTemplateFile(templateVersion, "docker-compose")
+		if err != nil {
+			return data, fmt.Errorf("Error retrieving docker-compose from template: %v", err)
+		}
+		rancherCompose, err = getTemplateFile(templateVersion, "rancher-compose")
+		if err != nil {
+			return data, fmt.Errorf("Error retrieving rancher-compose from template: %v", err)
+		}
 	}
 
 	if c, ok := d.GetOk("docker_compose"); ok {
@@ -503,4 +509,8 @@ func getCatalogTemplateVersion(c *catalog.RancherClient, catalogID string) (*cat
 
 func systemScope(scope string) bool {
 	return scope == "system"
+}
+
+func getTemplateFile(templateVersion *catalog.TemplateVersion, name string) (content string, err error) {
+	return templateVersion.Files[name+".yml"].(string), nil
 }
