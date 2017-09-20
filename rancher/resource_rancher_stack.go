@@ -176,16 +176,15 @@ func resourceRancherStackRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("environment_id", stack.AccountId)
 	d.Set("environment", stack.Environment)
 
-	if stack.ExternalId == "" {
+	if stack.System {
+		d.Set("scope", "system")
+	} else {
 		d.Set("scope", "user")
+	}
+	if stack.ExternalId == "" {
 		d.Set("catalog_id", "")
 	} else {
 		trimmedID := strings.TrimPrefix(stack.ExternalId, "system-")
-		if trimmedID == stack.ExternalId {
-			d.Set("scope", "user")
-		} else {
-			d.Set("scope", "system")
-		}
 		d.Set("catalog_id", strings.TrimPrefix(trimmedID, "catalog://"))
 	}
 
