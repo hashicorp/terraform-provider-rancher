@@ -94,17 +94,17 @@ func resourceRancherStackCreate(d *schema.ResourceData, meta interface{}) error 
 	log.Printf("[INFO] Creating Stack: %s", d.Id())
 	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting environment client: %v", err)
 	}
 
 	data, err := makeStackData(d, meta)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error generating stack data: %v", err)
 	}
 
 	var newStack rancherClient.Stack
 	if err := client.Create("stack", data, &newStack); err != nil {
-		return err
+		return fmt.Errorf("Error creating stack: %v", err)
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -131,12 +131,12 @@ func resourceRancherStackRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Stack: %s", d.Id())
 	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting environment client: %v", err)
 	}
 
 	stack, err := client.Stack.ById(d.Id())
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting stack (%s) by ID: %v", d.Id(), err)
 	}
 
 	if stack == nil {
@@ -153,7 +153,7 @@ func resourceRancherStackRead(d *schema.ResourceData, meta interface{}) error {
 
 	config, err := client.Stack.ActionExportconfig(stack, &rancherClient.ComposeConfigInput{})
 	if err != nil {
-		return err
+		return fmt.Errorf("Error retrieving stack (%s) config: %v", stack.Id, err)
 	}
 
 	log.Printf("[INFO] Stack Name: %s", stack.Name)
@@ -198,23 +198,23 @@ func resourceRancherStackUpdate(d *schema.ResourceData, meta interface{}) error 
 	log.Printf("[INFO] Updating Stack: %s", d.Id())
 	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting environment client: %v", err)
 	}
 	d.Partial(true)
 
 	data, err := makeStackData(d, meta)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error generating stack (%s) data: %v", d.Id(), err)
 	}
 
 	stack, err := client.Stack.ById(d.Id())
 	if err != nil {
-		return err
+		return fmt.Errorf("Error retrieving stack (%s) by ID: %v", d.Id(), err)
 	}
 
 	var newStack rancherClient.Stack
 	if err = client.Update(stack.Type, &stack.Resource, data, &newStack); err != nil {
-		return err
+		return fmt.Errorf("Error updating stack (%s): %v", stack.Id, err)
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -253,7 +253,7 @@ func resourceRancherStackUpdate(d *schema.ResourceData, meta interface{}) error 
 			ExternalId:     *data["externalId"].(*string),
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("Error upgrading stack (%s): %v", stack.Id, err)
 		}
 
 		stateConf := &resource.StateChangeConf{
@@ -274,7 +274,8 @@ func resourceRancherStackUpdate(d *schema.ResourceData, meta interface{}) error 
 		if d.Get("finish_upgrade").(bool) {
 			stack, err = client.Stack.ActionFinishupgrade(stack)
 			if err != nil {
-				return err
+				return fmt.Errorf(
+					"Error finishing stack (%s) upgrade: %v", stack.Id, err)
 			}
 
 			stateConf = &resource.StateChangeConf{
@@ -310,12 +311,12 @@ func resourceRancherStackDelete(d *schema.ResourceData, meta interface{}) error 
 	id := d.Id()
 	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting environment client: %v", err)
 	}
 
 	stack, err := client.Stack.ById(id)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting stack (%s) by ID: %v", id, err)
 	}
 
 	if err := client.Stack.Delete(stack); err != nil {
@@ -401,12 +402,13 @@ func makeStackData(d *schema.ResourceData, meta interface{}) (data map[string]in
 
 		catalogClient, err := meta.(*Config).CatalogClient()
 		if err != nil {
-			return data, err
+			return data, fmt.Errorf("Error getting catalog client: %v", err)
 		}
 
 		templateVersion, err := getCatalogTemplateVersion(catalogClient, catalogID)
 		if err != nil {
-			return data, err
+			return data, fmt.Errorf(
+				"Error getting catalog template version (%s): %v", catalogID, err)
 		}
 
 		if templateVersion.Id != catalogID {
