@@ -509,6 +509,16 @@ func systemScope(scope string) bool {
 	return scope == "system"
 }
 
-func getTemplateFile(templateVersion *catalog.TemplateVersion, name string) (content string, err error) {
-	return templateVersion.Files[name+".yml"].(string), nil
+func getTemplateFile(templateVersion *catalog.TemplateVersion, name string) (string, error) {
+	for _, validSuffix := range []string{
+		".yml",
+		".yaml",
+		".yml.tpl",
+		".yaml.tpl",
+	} {
+		if f, ok := templateVersion.Files[name+validSuffix]; ok {
+			return f.(string), nil
+		}
+	}
+	return "", fmt.Errorf("%s not found in template", name)
 }
