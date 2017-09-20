@@ -1,8 +1,17 @@
 ## 1.0.0 (Unreleased)
 
+IMPROVEMENTS:
+
+* resource/rancher_stack: improve error messages [GH-40]
+
 BUG FIXES:
 
 * resource/rancher_host: wait when host is in 'activating' state [GH-31]
+* resource/rancher_environment: fix member creation and orchestration update
+  [GH-37]
+* resource/rancher_stack: get system scope from API [GH-39]
+* resource/rancher_stack: use all valid suffixes to retrieve catalog template
+  files [GH-41]
 
 ## 0.2.0 (August 24, 2017)
 
