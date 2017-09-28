@@ -1,4 +1,9 @@
 ## 1.0.1 (Unreleased)
+
+BUG FIXES:
+
+* resource/rancher_host: remove rancher_host's importer [GH-43]
+
 ## 1.0.0 (September 20, 2017)
 
 IMPROVEMENTS:
