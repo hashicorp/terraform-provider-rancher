@@ -25,9 +25,6 @@ func resourceRancherHost() *schema.Resource {
 		Read:   resourceRancherHostRead,
 		Update: resourceRancherHostUpdate,
 		Delete: resourceRancherHostDelete,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
 
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
