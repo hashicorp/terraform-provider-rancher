@@ -3,6 +3,7 @@
 BUG FIXES:
 
 * resource/rancher_host: remove rancher_host's importer [GH-43]
+* resource/rancher_host: increase NotFoundChecks [GH-46]
 
 ## 1.0.0 (September 20, 2017)
 
