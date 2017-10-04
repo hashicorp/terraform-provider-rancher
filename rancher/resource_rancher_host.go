@@ -65,12 +65,13 @@ func resourceRancherHostCreate(d *schema.ResourceData, meta interface{}) error {
 	hostname := d.Get("hostname").(string)
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"active", "removed", "removing", "not found", "registering", "activating"},
-		Target:     []string{"active", "disconnected"},
-		Refresh:    findHost(client, hostname),
-		Timeout:    10 * time.Minute,
-		Delay:      1 * time.Second,
-		MinTimeout: 3 * time.Second,
+		Pending:        []string{"active", "removed", "removing", "not found", "registering", "activating"},
+		Target:         []string{"active", "disconnected"},
+		Refresh:        findHost(client, hostname),
+		Timeout:        10 * time.Minute,
+		Delay:          1 * time.Second,
+		MinTimeout:     3 * time.Second,
+		NotFoundChecks: 50,
 	}
 	host, waitErr := stateConf.WaitForState()
 	if waitErr != nil {
