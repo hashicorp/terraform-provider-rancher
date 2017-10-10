@@ -1,4 +1,8 @@
-## 1.0.1 (Unreleased)
+## 1.1.0 (Unreleased)
+
+FEATURES:
+
+* **New Data Source**: `rancher_certificate` [GH-47]
 
 BUG FIXES:
 
