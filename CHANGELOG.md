@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Data Source**: `rancher_certificate` [GH-47]
+* **New Data Source**: `rancher_environment` [GH-48]
 
 BUG FIXES:
 
