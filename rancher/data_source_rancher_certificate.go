@@ -3,7 +3,9 @@ package rancher
 import (
 	"fmt"
 	"log"
+	"time"
 
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	rancher "github.com/rancher/go-rancher/v2"
 )
@@ -80,22 +82,21 @@ func dataSourceRancherCertificateRead(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	certs, err := client.Certificate.List(NewListOpts())
-	if err != nil {
-		return err
+	stateConf := &resource.StateChangeConf{
+		Pending:    []string{"active", "removed", "removing", "not found"},
+		Target:     []string{"active"},
+		Refresh:    findCert(client, name),
+		Timeout:    10 * time.Minute,
+		Delay:      1 * time.Second,
+		MinTimeout: 3 * time.Second,
+	}
+	cert, waitErr := stateConf.WaitForState()
+	if waitErr != nil {
+		return fmt.Errorf(
+			"Error waiting for certificate (%s) to be found: %s", name, waitErr)
 	}
 
-	var certificate rancher.Certificate
-
-	for _, cert := range certs.Data {
-		if cert.Name == name {
-			certificate = cert
-		}
-	}
-	if certificate.Name == "" {
-		return fmt.Errorf("failed to find certificate %s", name)
-	}
-
+	certificate := cert.(rancher.Certificate)
 	d.SetId(certificate.Id)
 
 	d.Set("description", certificate.Description)
@@ -113,4 +114,21 @@ func dataSourceRancherCertificateRead(d *schema.ResourceData, meta interface{}) 
 	d.Set("version", certificate.Version)
 
 	return nil
+}
+
+func findCert(client *rancher.RancherClient, certname string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+		certs, err := client.Certificate.List(NewListOpts())
+		if err != nil {
+			return nil, "", err
+		}
+
+		for _, cert := range certs.Data {
+			if cert.Name == certname {
+				return cert, cert.State, nil
+			}
+		}
+
+		return nil, "not found", nil
+	}
 }
