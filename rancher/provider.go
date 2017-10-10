@@ -62,8 +62,9 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"rancher_setting":     dataSourceRancherSetting(),
 			"rancher_certificate": dataSourceRancherCertificate(),
+			"rancher_environment": dataSourceRancherEnvironment(),
+			"rancher_setting":     dataSourceRancherSetting(),
 		},
 
 		ConfigureFunc: providerConfigure,
