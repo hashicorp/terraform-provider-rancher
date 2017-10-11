@@ -1,14 +1,14 @@
-## 1.1.0 (Unreleased)
+## 1.1.0 (October 11, 2017)
 
 FEATURES:
 
-* **New Data Source**: `rancher_certificate` [GH-47]
-* **New Data Source**: `rancher_environment` [GH-48]
+* **New Data Source**: `rancher_certificate` ([#47](https://github.com/terraform-providers/terraform-provider-rancher/issues/47))
+* **New Data Source**: `rancher_environment` ([#48](https://github.com/terraform-providers/terraform-provider-rancher/issues/48))
 
 BUG FIXES:
 
-* resource/rancher_host: remove rancher_host's importer [GH-43]
-* resource/rancher_host: increase NotFoundChecks [GH-46]
+* resource/rancher_host: remove rancher_host's importer ([#43](https://github.com/terraform-providers/terraform-provider-rancher/issues/43))
+* resource/rancher_host: increase NotFoundChecks ([#46](https://github.com/terraform-providers/terraform-provider-rancher/issues/46))
 
 ## 1.0.0 (September 20, 2017)
 
