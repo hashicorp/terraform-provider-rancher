@@ -21,9 +21,9 @@ resource "rancher_registration_token" "default" {
   agent_ip       = "1.2.3.4"
 
   host_labels    {
-    orchestration = true,
-    etcd          = true,
-    compute       = true
+    orchestration = "true",
+    etcd          = "true",
+    compute       = "true"
   }
 }
 ```
