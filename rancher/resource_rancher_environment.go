@@ -115,7 +115,7 @@ func resourceRancherEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"active", "removed", "removing"},
+		Pending:    []string{"active", "activating", "registering", "removed", "removing"},
 		Target:     []string{"active"},
 		Refresh:    EnvironmentStateRefreshFunc(client, newEnv.Id),
 		Timeout:    10 * time.Minute,

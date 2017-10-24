@@ -89,7 +89,7 @@ func resourceRancherRegistrationTokenCreate(d *schema.ResourceData, meta interfa
 	}
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"active", "removed", "removing"},
+		Pending:    []string{"active", "activating", "removed", "removing"},
 		Target:     []string{"active"},
 		Refresh:    RegistrationTokenStateRefreshFunc(client, newRegT.Id),
 		Timeout:    10 * time.Minute,
