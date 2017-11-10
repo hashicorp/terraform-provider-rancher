@@ -1,4 +1,10 @@
 ## 1.1.1 (Unreleased)
+
+BUG FIXES:
+
+* doc/rancher_registration_token: Fix documentation [GH-50]
+* datasource/rancher_certificate: increase NotFoundChecks [GH-57]
+
 ## 1.1.0 (October 11, 2017)
 
 FEATURES:
