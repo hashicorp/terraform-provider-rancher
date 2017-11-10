@@ -2,8 +2,9 @@
 
 BUG FIXES:
 
-* doc/rancher_registration_token: Fix documentation [GH-50]
+* doc/rancher_registration_token: fix documentation [GH-50]
 * datasource/rancher_certificate: increase NotFoundChecks [GH-57]
+* resource/rancher_environment: add missing pending states [GH-53]
 
 ## 1.1.0 (October 11, 2017)
 
