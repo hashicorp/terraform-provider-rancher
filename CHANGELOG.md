@@ -1,11 +1,11 @@
-## 1.1.1 (Unreleased)
+## 1.1.1 (November 10, 2017)
 
 BUG FIXES:
 
-* doc/rancher_certificate: add datasource usage documentation [GH-58]
-* doc/rancher_registration_token: fix documentation [GH-50]
-* datasource/rancher_certificate: increase NotFoundChecks [GH-57]
-* resource/rancher_environment: add missing pending states [GH-53]
+* doc/rancher_certificate: add datasource usage documentation ([#58](https://github.com/terraform-providers/terraform-provider-rancher/issues/58))
+* doc/rancher_registration_token: fix documentation ([#50](https://github.com/terraform-providers/terraform-provider-rancher/issues/50))
+* datasource/rancher_certificate: increase NotFoundChecks ([#57](https://github.com/terraform-providers/terraform-provider-rancher/issues/57))
+* resource/rancher_environment: add missing pending states ([#53](https://github.com/terraform-providers/terraform-provider-rancher/issues/53))
 
 ## 1.1.0 (October 11, 2017)
 
