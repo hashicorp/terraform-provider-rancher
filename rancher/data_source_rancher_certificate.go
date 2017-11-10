@@ -83,12 +83,13 @@ func dataSourceRancherCertificateRead(d *schema.ResourceData, meta interface{}) 
 	}
 
 	stateConf := &resource.StateChangeConf{
-		Pending:    []string{"active", "removed", "removing", "not found"},
-		Target:     []string{"active"},
-		Refresh:    findCert(client, name),
-		Timeout:    10 * time.Minute,
-		Delay:      1 * time.Second,
-		MinTimeout: 3 * time.Second,
+		Pending:        []string{"active", "removed", "removing", "not found"},
+		Target:         []string{"active"},
+		Refresh:        findCert(client, name),
+		Timeout:        10 * time.Minute,
+		Delay:          1 * time.Second,
+		MinTimeout:     3 * time.Second,
+		NotFoundChecks: 50,
 	}
 	cert, waitErr := stateConf.WaitForState()
 	if waitErr != nil {
