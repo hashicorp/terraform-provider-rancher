@@ -1,4 +1,9 @@
 ## 1.1.2 (Unreleased)
+
+BUG FIXES:
+
+* doc: add missing entries in doc sidebar [GH-59]
+
 ## 1.1.1 (November 10, 2017)
 
 BUG FIXES:
