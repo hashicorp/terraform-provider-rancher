@@ -39,8 +39,9 @@ func resourceRancherRegistryCredential() *schema.Resource {
 				ForceNew: true,
 			},
 			"email": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Deprecated: "The email parameter is not used anymore and will be removed in future versions of the provider.",
 			},
 			"public_value": &schema.Schema{
 				Type:     schema.TypeString,

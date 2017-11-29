@@ -191,7 +191,6 @@ resource "rancher_registry_credential" "foo" {
 	name = "foo"
 	description = "registry credential test"
 	registry_id = "${rancher_registry.foo.id}"
-	email = "registry@credential.com"
 	public_value = "user"
 	secret_value = "pass"
 }
@@ -214,7 +213,6 @@ resource "rancher_registry_credential" "foo" {
 	name = "foo2"
 	description = "registry credential test - updated"
 	registry_id = "${rancher_registry.foo.id}"
-	email = "registry@credential.com"
 	public_value = "user2"
 	secret_value = "pass"
 }
