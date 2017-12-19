@@ -6,6 +6,7 @@ FEATURES:
 
 IMPROVEMENTS:
 
+* doc/rancher_volume: add resource usage documentation [GH-64]
 * resource/rancher_registry_credential: Deprecate email attribute [GH-61]
 
 BUG FIXES:
