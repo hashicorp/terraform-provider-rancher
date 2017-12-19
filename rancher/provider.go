@@ -59,6 +59,7 @@ func Provider() terraform.ResourceProvider {
 			"rancher_registry_credential": resourceRancherRegistryCredential(),
 			"rancher_secret":              resourceRancherSecret(),
 			"rancher_stack":               resourceRancherStack(),
+			"rancher_volume":              resourceRancherVolume(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
