@@ -1,4 +1,12 @@
-## 1.1.2 (Unreleased)
+## 1.2.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource:** `rancher_volume` [GH-63]
+
+IMPROVEMENTS:
+
+* resource/rancher_registry_credential: Deprecate email attribute [GH-61]
 
 BUG FIXES:
 
