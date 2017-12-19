@@ -1,17 +1,17 @@
-## 1.2.0 (Unreleased)
+## 1.2.0 (December 19, 2017)
 
 FEATURES:
 
-* **New Resource:** `rancher_volume` [GH-63]
+* **New Resource:** `rancher_volume` ([#63](https://github.com/terraform-providers/terraform-provider-rancher/issues/63))
 
 IMPROVEMENTS:
 
-* doc/rancher_volume: add resource usage documentation [GH-64]
-* resource/rancher_registry_credential: Deprecate email attribute [GH-61]
+* doc/rancher_volume: add resource usage documentation ([#64](https://github.com/terraform-providers/terraform-provider-rancher/issues/64))
+* resource/rancher_registry_credential: Deprecate email attribute ([#61](https://github.com/terraform-providers/terraform-provider-rancher/issues/61))
 
 BUG FIXES:
 
-* doc: add missing entries in doc sidebar [GH-59]
+* doc: add missing entries in doc sidebar ([#59](https://github.com/terraform-providers/terraform-provider-rancher/issues/59))
 
 ## 1.1.1 (November 10, 2017)
 
