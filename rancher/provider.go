@@ -114,10 +114,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		}
 	}
 
-	if apiURL == "" {
-		return &Config{}, fmt.Errorf("No api_url provided")
-	}
-
 	config := &Config{
 		APIURL:    apiURL,
 		AccessKey: accessKey,
