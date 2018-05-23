@@ -29,18 +29,39 @@ func Provider() terraform.ResourceProvider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_URL", ""),
 				Description: descriptions["api_url"],
+				Deprecated:  "true",
 			},
 			"access_key": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_ACCESS_KEY", ""),
 				Description: descriptions["access_key"],
+				Deprecated:  "true",
 			},
 			"secret_key": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_SECRET_KEY", ""),
 				Description: descriptions["secret_key"],
+				Deprecated:  "true",
+			},
+			"cattle_url": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CATTLE_URL", ""),
+				Description: descriptions["cattle_url"],
+			},
+			"cattle_access_key": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CATTLE_ACCESS_KEY", ""),
+				Description: descriptions["cattle_access_key"],
+			},
+			"cattle_secret_key": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CATTLE_SECRET_KEY", ""),
+				Description: descriptions["cattle_secret_key"],
 			},
 			"config": &schema.Schema{
 				Type:        schema.TypeString,
@@ -80,16 +101,28 @@ func init() {
 
 		"secret_key": "API secret used to authenticate with the rancher server",
 
-		"api_url": "The URL to the rancher API, must include version uri (ie. v1 or v2-beta)",
+		"api_url": "The URL to the rancher API",
+
+		"cattle_access_key": "API Key used to authenticate with the rancher server",
+
+		"cattle_secret_key": "API secret used to authenticate with the rancher server",
+
+		"cattle_url": "The URL to the rancher API",
 
 		"config": "Path to the Rancher client cli.json config file",
 	}
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	// Fetch configuration from deprecated environment variables
 	apiURL := d.Get("api_url").(string)
 	accessKey := d.Get("access_key").(string)
 	secretKey := d.Get("secret_key").(string)
+
+	// Override with new environment variables
+	apiURL = d.Get("cattle_url").(string)
+	accessKey = d.Get("cattle_access_key").(string)
+	secretKey = d.Get("cattle_secret_key").(string)
 
 	if configFile := d.Get("config").(string); configFile != "" {
 		config, err := loadConfig(configFile)
