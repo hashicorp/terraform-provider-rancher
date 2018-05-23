@@ -98,11 +98,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		}
 
 		if apiURL == "" && config.URL != "" {
-			u, err := url.Parse(config.URL)
-			if err != nil {
-				return config, err
-			}
-			apiURL = u.Scheme + "://" + u.Host
+			apiURL = config.URL
 		}
 
 		if accessKey == "" {
@@ -117,6 +113,12 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	if apiURL == "" {
 		return &Config{}, fmt.Errorf("No api_url provided")
 	}
+
+	u, err := url.Parse(apiURL)
+	if err != nil {
+		return &Config{}, err
+	}
+	apiURL = u.Scheme + "://" + u.Host
 
 	config := &Config{
 		APIURL:    apiURL,
