@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
-	rancher "github.com/rancher/go-rancher/v2"
+	rancherClient "github.com/rancher/go-rancher/v2"
 )
 
 func resourceRancherVolume() *schema.Resource {
@@ -36,7 +36,8 @@ func resourceRancherVolume() *schema.Resource {
 			},
 			"environment_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"driver": &schema.Schema{
 				Type:     schema.TypeString,
@@ -48,7 +49,13 @@ func resourceRancherVolume() *schema.Resource {
 
 func resourceRancherVolumeCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO][rancher] Creating Volume: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -57,7 +64,7 @@ func resourceRancherVolumeCreate(d *schema.ResourceData, meta interface{}) error
 	description := d.Get("description").(string)
 	driver := d.Get("driver").(string)
 
-	volume := rancher.Volume{
+	volume := rancherClient.Volume{
 		Name:        name,
 		Description: description,
 		Driver:      driver,
@@ -89,7 +96,13 @@ func resourceRancherVolumeCreate(d *schema.ResourceData, meta interface{}) error
 
 func resourceRancherVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Volume: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -110,7 +123,13 @@ func resourceRancherVolumeRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceRancherVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Updating Volume: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -130,7 +149,7 @@ func resourceRancherVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 		"driver":      &driver,
 	}
 
-	var newVolume rancher.Volume
+	var newVolume rancherClient.Volume
 	if err := client.Update("volume", &volume.Resource, data, &newVolume); err != nil {
 		return err
 	}
@@ -141,7 +160,13 @@ func resourceRancherVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceRancherVolumeDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting Volume: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -197,7 +222,7 @@ func resourceRancherVolumeImport(d *schema.ResourceData, meta interface{}) ([]*s
 
 // VolumeStateRefreshFunc returns a resource.StateRefreshFunc that is used to watch
 // a Rancher Volume.
-func VolumeStateRefreshFunc(client *rancher.RancherClient, volumeID string) resource.StateRefreshFunc {
+func VolumeStateRefreshFunc(client *rancherClient.RancherClient, volumeID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		cert, err := client.Volume.ById(volumeID)
 

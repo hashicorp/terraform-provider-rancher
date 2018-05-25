@@ -40,8 +40,8 @@ func resourceRancherRegistry() *schema.Resource {
 			},
 			"environment_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
+				Computed: true,
 			},
 		},
 	}
@@ -49,7 +49,13 @@ func resourceRancherRegistry() *schema.Resource {
 
 func resourceRancherRegistryCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating Registry: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -90,7 +96,13 @@ func resourceRancherRegistryCreate(d *schema.ResourceData, meta interface{}) err
 
 func resourceRancherRegistryRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Registry: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -123,7 +135,13 @@ func resourceRancherRegistryRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceRancherRegistryUpdate(d *schema.ResourceData, meta interface{}) error {
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -146,7 +164,13 @@ func resourceRancherRegistryUpdate(d *schema.ResourceData, meta interface{}) err
 func resourceRancherRegistryDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting Registry: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
