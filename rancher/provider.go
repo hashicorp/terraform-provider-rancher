@@ -29,21 +29,18 @@ func Provider() terraform.ResourceProvider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_URL", ""),
 				Description: descriptions["api_url"],
-				Deprecated:  "true",
 			},
 			"access_key": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_ACCESS_KEY", ""),
 				Description: descriptions["access_key"],
-				Deprecated:  "true",
 			},
 			"secret_key": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_SECRET_KEY", ""),
 				Description: descriptions["secret_key"],
-				Deprecated:  "true",
 			},
 			"cattle_url": &schema.Schema{
 				Type:        schema.TypeString,
