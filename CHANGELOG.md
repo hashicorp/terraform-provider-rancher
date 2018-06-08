@@ -1,4 +1,9 @@
-## 1.3.0 (Unreleased)
+## 1.2.1 (Unreleased)
+
+BUG FIXES:
+
+* resource/rancher_volume: changing environment_id or driver forces resource renewal ([#79](https://github.com/terraform-providers/terraform-provider-rancher/pull/79))
+
 ## 1.2.0 (December 19, 2017)
 
 FEATURES:
