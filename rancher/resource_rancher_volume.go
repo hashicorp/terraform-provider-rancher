@@ -42,6 +42,7 @@ func resourceRancherVolume() *schema.Resource {
 			"driver": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 		},
 	}
