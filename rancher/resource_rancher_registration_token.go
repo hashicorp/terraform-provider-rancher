@@ -133,7 +133,7 @@ func resourceRancherRegistrationTokenRead(d *schema.ResourceData, meta interface
 	}
 
 	regCommand := addHostLabels(regT.Command, d.Get("host_labels").(map[string]interface{}))
-	regCommand = addAgentIp(regCommand, d.Get("agent_ip").(string))
+	regCommand = addAgentIP(regCommand, d.Get("agent_ip").(string))
 	log.Printf("[INFO] RegistrationToken Name: %s", regT.Name)
 
 	d.Set("description", regT.Description)

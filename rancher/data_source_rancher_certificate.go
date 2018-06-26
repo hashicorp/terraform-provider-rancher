@@ -76,8 +76,8 @@ func dataSourceRancherCertificateRead(d *schema.ResourceData, meta interface{}) 
 	name := d.Get("name").(string)
 	log.Printf("[INFO] Refreshing Rancher Certificate: %s", name)
 
-	environmentId := d.Get("environment_id").(string)
-	client, err := meta.(*Config).EnvironmentClient(environmentId)
+	environmentID := d.Get("environment_id").(string)
+	client, err := meta.(*Config).EnvironmentClient(environmentID)
 	if err != nil {
 		return err
 	}

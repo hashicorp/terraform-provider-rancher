@@ -1,12 +1,14 @@
 package rancher
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	rancher "github.com/rancher/go-rancher/v2"
 )
 
@@ -30,6 +32,45 @@ func dataSourceRancherEnvironment() *schema.Resource {
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+			"default_policy": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"policy": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"action": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, true),
+						},
+						"within": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"stack", "service", "linked"}, true),
+						},
+						"between": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"from": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"to": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"ports": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
 			},
 			"member": &schema.Schema{
 				Type:     schema.TypeSet,
@@ -91,6 +132,17 @@ func dataSourceRancherEnvironmentRead(d *schema.ResourceData, meta interface{}) 
 	envClient, err := meta.(*Config).EnvironmentClient(d.Id())
 	if err != nil {
 		return err
+	}
+
+	network, err := envClient.Network.ById(environment.DefaultNetworkId)
+	if err != nil {
+		return errors.New("Error creating environment, no default network found")
+	}
+	d.Set("default_policy", network.DefaultPolicyAction)
+
+	normalizedNetworkPolicies := normalizeNetworkPolicies(network.Policy)
+	if len(normalizedNetworkPolicies) > 0 {
+		d.Set("policy", normalizedNetworkPolicies)
 	}
 
 	members, _ := envClient.ProjectMember.List(NewListOpts())

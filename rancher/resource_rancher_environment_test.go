@@ -176,6 +176,156 @@ func testAccCheckRancherEnvironmentDestroy(s *terraform.State) error {
 	return nil
 }
 
+func TestAccRancherEnvironmentDefaultPolicy(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckRancherEnvironmentDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: testAccRancherEnvironmentDefaultPolicyConfig,
+				Check: func(s *terraform.State) error {
+					rs, ok := s.RootModule().Resources["rancher_environment.foo"]
+
+					if !ok {
+						return fmt.Errorf("Environment not found")
+					}
+
+					if rs.Primary.ID == "" {
+						return fmt.Errorf("No App Name is set")
+					}
+
+					client, err := testAccProvider.Meta().(*Config).GlobalClient()
+					if err != nil {
+						return err
+					}
+
+					env, err := client.Project.ById(rs.Primary.ID)
+					if err != nil {
+						return err
+					}
+
+					envClient, err := testAccProvider.Meta().(*Config).EnvironmentClient(rs.Primary.ID)
+					if err != nil {
+						return fmt.Errorf("Failed to create project scoped client")
+					}
+
+					network, err := envClient.Network.ById(env.DefaultNetworkId)
+					if err != nil {
+						return fmt.Errorf("Error failed retrive default network interface with id: %s", env.DefaultNetworkId)
+					}
+
+					if want := rs.Primary.Attributes["default_policy"]; want != network.DefaultPolicyAction {
+						return fmt.Errorf("Mismatch network policy want: %s received: %s", want, network.DefaultPolicyAction)
+					}
+
+					return nil
+				},
+			},
+		},
+	},
+	)
+}
+
+func TestEnviromentPolicyRules(t *testing.T) {
+	testCases := []struct {
+		desc     string
+		in       []interface{}
+		expected error
+	}{
+		{
+			desc: "to-from",
+			in: []interface{}{
+				map[string]interface{}{
+					"from":  "a",
+					"to":    "b",
+					"ports": []string{"1000"},
+				},
+			},
+			expected: nil,
+		},
+		{
+			desc: "within",
+			in: []interface{}{
+				map[string]interface{}{
+					"action": "allow",
+					"within": "foo",
+				},
+			},
+			expected: nil,
+		},
+		{
+			desc: "between",
+			in: []interface{}{
+				map[string]interface{}{
+					"between": "stack",
+					"action":  "allow",
+				},
+			},
+			expected: nil,
+		},
+		{
+			desc: "incompatible to/from within",
+			in: []interface{}{
+				map[string]interface{}{
+					"from":   "a",
+					"to":     "b",
+					"within": "service",
+				},
+			},
+			expected: ErrNetworkPolicy,
+		},
+		{
+			desc: "incompatible to/from between",
+			in: []interface{}{
+				map[string]interface{}{
+					"from":    "a",
+					"to":      "b",
+					"between": "service",
+				},
+			},
+			expected: ErrNetworkPolicy,
+		},
+		{
+			desc: "incompatible to/from between",
+			in: []interface{}{
+				map[string]interface{}{
+					"from":   "a",
+					"to":     "b",
+					"within": "service",
+				},
+			},
+			expected: ErrNetworkPolicy,
+		},
+		{
+			desc: "missing to",
+			in: []interface{}{
+				map[string]interface{}{
+					"from": "a",
+				},
+			},
+			expected: ErrNetworkPolicy,
+		},
+		{
+			desc: "missing from",
+			in: []interface{}{
+				map[string]interface{}{
+					"to": "a",
+				},
+			},
+			expected: ErrNetworkPolicy,
+		},
+	}
+
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			if recv := validateNetworkPolicies(tC.in); recv != tC.expected {
+				t.Errorf("rule validation failed, expected %+v, received %+v", tC.expected, recv)
+			}
+		})
+	}
+}
+
 const testAccRancherEnvironmentConfig = `
 resource "rancher_environment" "foo" {
 	name = "foo"
@@ -222,6 +372,15 @@ resource "rancher_environment" "foo" {
 		external_id_type = "github_user"
 		role = "owner"
 	}
+}
+`
+
+const testAccRancherEnvironmentDefaultPolicyConfig = `
+resource "rancher_environment" "foo" {
+	name = "foo"
+	description = "Terraform acc test group"
+	orchestration = "cattle"
+	default_policy = "deny"
 }
 `
 

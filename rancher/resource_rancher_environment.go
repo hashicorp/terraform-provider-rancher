@@ -1,8 +1,10 @@
 package rancher
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -19,6 +21,9 @@ var (
 		"swarm":      "",
 		"cattle":     "",
 	}
+
+	// ErrNetworkPolicy network policy validation error
+	ErrNetworkPolicy = errors.New("only one of `within` `between` `to|from` can be set")
 )
 
 func resourceRancherEnvironment() *schema.Resource {
@@ -59,6 +64,47 @@ func resourceRancherEnvironment() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"default_policy": &schema.Schema{
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, true),
+			},
+			"policy": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"action": {
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{"allow", "deny"}, true),
+						},
+						"within": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: validation.StringInSlice([]string{"stack", "service", "linked"}, true),
+						},
+						"between": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"from": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"to": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"ports": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 			"member": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -98,6 +144,12 @@ func resourceRancherEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 	orchestration := d.Get("orchestration").(string)
 	projectTemplateID := d.Get("project_template_id").(string)
 
+	// validate policy arguments
+	polices := d.Get("policy").(*schema.Set).List()
+	if err := validateNetworkPolicies(polices); err != nil {
+		return err
+	}
+
 	projectTemplateID, err = getProjectTemplateID(orchestration, projectTemplateID)
 	if err != nil {
 		return err
@@ -131,7 +183,15 @@ func resourceRancherEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 	d.SetId(newEnv.Id)
 	log.Printf("[INFO] Environment ID: %s", d.Id())
 
-	return projectMembersCreateOrUpdate(d, meta)
+	if err := projectNetworkPolicyCreateOrUpdate(d, meta); err != nil {
+		return err
+	}
+
+	if err := projectMembersCreateOrUpdate(d, meta); err != nil {
+		return err
+	}
+
+	return resourceRancherEnvironmentRead(d, meta)
 }
 
 func resourceRancherEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
@@ -170,11 +230,22 @@ func resourceRancherEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 		return err
 	}
 
+	network, err := envClient.Network.ById(env.DefaultNetworkId)
+	if err != nil {
+		return errors.New("Error creating environment, no default network found")
+	}
+	d.Set("default_policy", network.DefaultPolicyAction)
+
+	normalizedNetworkPolicies := normalizeNetworkPolicies(network.Policy)
+	d.Set("policy", normalizedNetworkPolicies)
+	log.Printf("[LOG] policies found %+v", normalizedNetworkPolicies)
+
 	members, _ := envClient.ProjectMember.List(NewListOpts())
 	normalizedMembers := normalizeMembers(members.Data)
 	if len(normalizedMembers) > 0 {
 		d.Set("member", normalizedMembers)
 	}
+
 	return nil
 }
 
@@ -183,6 +254,12 @@ func resourceRancherEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 
 	client, err := meta.(*Config).GlobalClient()
 	if err != nil {
+		return err
+	}
+
+	// validate policy arguments
+	polices := d.Get("policy").(*schema.Set).List()
+	if err := validateNetworkPolicies(polices); err != nil {
 		return err
 	}
 
@@ -204,7 +281,15 @@ func resourceRancherEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 		return err
 	}
 
-	return projectMembersCreateOrUpdate(d, meta)
+	if err := projectNetworkPolicyCreateOrUpdate(d, meta); err != nil {
+		return err
+	}
+
+	if err := projectMembersCreateOrUpdate(d, meta); err != nil {
+		return err
+	}
+
+	return resourceRancherEnvironmentRead(d, meta)
 }
 
 func resourceRancherEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
@@ -245,6 +330,50 @@ func resourceRancherEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 	return nil
 }
 
+func projectNetworkPolicyCreateOrUpdate(d *schema.ResourceData, meta interface{}) error {
+	client, err := meta.(*Config).GlobalClient()
+	if err != nil {
+		return err
+	}
+
+	env, err := client.Project.ById(d.Id())
+	if err != nil {
+		return err
+	}
+
+	envClient, err := meta.(*Config).EnvironmentClient(d.Id())
+	if err != nil {
+		return err
+	}
+
+	network, err := envClient.Network.ById(env.DefaultNetworkId)
+	if err != nil {
+		return fmt.Errorf("Error failed retrive default network interface with id: %s", env.DefaultNetworkId)
+	}
+
+	desiredNetworkPolicy := d.Get("default_policy").(string)
+	if desiredNetworkPolicy != "" && desiredNetworkPolicy != network.DefaultPolicyAction {
+		_, err := envClient.Network.Update(network, map[string]interface{}{
+			"defaultPolicyAction": desiredNetworkPolicy,
+		})
+
+		if err != nil {
+			return fmt.Errorf("Error failed to set default network policy, network id %s", env.DefaultNetworkId)
+		}
+	}
+
+	policies := d.Get("policy").(*schema.Set).List()
+	_, err = envClient.Network.Update(network, map[string]interface{}{
+		"policy": makeNetworkPolicies(policies),
+	})
+
+	if err != nil {
+		return fmt.Errorf("Error failed to set network policies, network id %s", env.DefaultNetworkId)
+	}
+
+	return nil
+}
+
 func projectMembersCreateOrUpdate(d *schema.ResourceData, meta interface{}) error {
 	client, err := meta.(*Config).GlobalClient()
 	if err != nil {
@@ -271,7 +400,7 @@ func projectMembersCreateOrUpdate(d *schema.ResourceData, meta interface{}) erro
 			return err
 		}
 	}
-	return resourceRancherEnvironmentRead(d, meta)
+	return nil
 }
 
 func getProjectTemplateID(orchestration, templateID string) (string, error) {
@@ -303,6 +432,106 @@ func normalizeMembers(in []rancherClient.ProjectMember) (out []interface{}) {
 	return
 }
 
+func normalizeNetworkPolicies(in []rancherClient.NetworkPolicyRule) (out []interface{}) {
+	for _, policy := range in {
+		n := make(map[string]interface{})
+		n["action"] = policy.Action
+
+		if policy.Within != "" {
+			n["within"] = policy.Within
+		}
+
+		if policy.Between.GroupBy != "" {
+			n["between"] = policy.Between.GroupBy
+		}
+
+		if policy.From.Selector != "" {
+			n["from"] = policy.From.Selector
+		}
+
+		if policy.To.Selector != "" {
+			n["to"] = policy.To.Selector
+		}
+
+		if len(policy.Ports) > 0 {
+			n["ports"] = strings.Join(policy.Ports, ",")
+		}
+
+		out = append(out, n)
+	}
+
+	return
+}
+
+func makeNetworkPolicies(in []interface{}) (out []map[string]interface{}) {
+	for _, n := range in {
+		nMap := n.(map[string]interface{})
+
+		nn := map[string]interface{}{}
+		within := nMap["within"].(string)
+		between := nMap["between"].(string)
+		to := nMap["to"].(string)
+		from := nMap["from"].(string)
+
+		nn["action"] = nMap["action"].(string)
+
+		if within != "" {
+			nn["within"] = within
+		}
+
+		if between != "" {
+			nn["between"] = map[string]string{
+				"groupBy": between,
+			}
+		}
+
+		if from != "" {
+			nn["from"] = map[string]string{
+				"selector": from,
+			}
+		}
+
+		if to != "" {
+			nn["to"] = map[string]string{
+				"selector": to,
+			}
+		}
+
+		ports := nMap["ports"].(string)
+		if ports != "" {
+			nn["ports"] = strings.Split(ports, ",")
+		}
+
+		out = append(out, nn)
+	}
+	return
+}
+
+func validateNetworkPolicies(policies []interface{}) error {
+	for _, n := range policies {
+		nMap := n.(map[string]interface{})
+
+		within, _ := nMap["within"].(string)
+		between, _ := nMap["between"].(string)
+		to, _ := nMap["to"].(string)
+		from, _ := nMap["from"].(string)
+
+		if within != "" && between != "" {
+			return ErrNetworkPolicy
+		}
+
+		if (within != "" || between != "") && (from != "" || to != "") {
+			return ErrNetworkPolicy
+		}
+
+		if (from != "" && to == "") || (from == "" && to != "") {
+			return ErrNetworkPolicy
+		}
+	}
+
+	return nil
+}
+
 func makeProjectMembers(in []interface{}) (out []rancherClient.ProjectMember) {
 	for _, m := range in {
 		mMap := m.(map[string]interface{})
@@ -324,6 +553,11 @@ func EnvironmentStateRefreshFunc(client *rancherClient.RancherClient, environmen
 
 		if err != nil {
 			return nil, "", err
+		}
+
+		// Wait until network is available
+		if env != nil && env.DefaultNetworkId == "" {
+			return nil, "", nil
 		}
 
 		// Env not returned, or State not set...

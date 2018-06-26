@@ -81,7 +81,7 @@ func addHostLabels(command string, labels map[string]interface{}) string {
 	return strings.Join(result, " ")
 }
 
-func addAgentIp(command string, ip string) string {
+func addAgentIP(command string, ip string) string {
 	result := []string{}
 
 	if ip == "" {
