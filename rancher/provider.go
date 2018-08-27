@@ -51,6 +51,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"rancher_api_key":             resourceRancherApiKey(),
 			"rancher_certificate":         resourceRancherCertificate(),
 			"rancher_environment":         resourceRancherEnvironment(),
 			"rancher_host":                resourceRancherHost(),
