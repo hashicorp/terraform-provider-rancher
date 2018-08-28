@@ -78,7 +78,6 @@ func resourceRancherApiKeyCreate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	// var newApiKey rancherClient.ApiKey
-	log.Printf("[INFO] client.Create(ApiKey...): %+v\n", client.Create)
 	newApiKey, err := client.ApiKey.Create(&data)
 	if err != nil {
 		return err
