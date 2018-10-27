@@ -47,6 +47,7 @@ func resourceRancherHost() *schema.Resource {
 			"hostname": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"labels": {
 				Type:     schema.TypeMap,
