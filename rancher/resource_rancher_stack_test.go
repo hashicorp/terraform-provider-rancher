@@ -18,7 +18,7 @@ func TestAccRancherStack_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherStackDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherStackConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherStackExists("rancher_stack.foo", &stack),
@@ -30,7 +30,7 @@ func TestAccRancherStack_basic(t *testing.T) {
 					testAccCheckRancherStackAttributes(&stack, emptyEnvironment, false),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherStackUpdateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherStackExists("rancher_stack.foo", &stack),
@@ -54,7 +54,7 @@ func TestAccRancherStack_compose(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherStackDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherStackComposeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherStackExists("rancher_stack.compose", &stack),
@@ -81,7 +81,7 @@ func TestAccRancherStack_catalog(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherStackDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherStackSystemCatalogConfigInitial,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherStackExists("rancher_stack.catalog", &stack),
@@ -96,7 +96,7 @@ func TestAccRancherStack_catalog(t *testing.T) {
 					testAccCheckRancherStackAttributes(&stack, catalogEnvironment, true),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherStackSystemCatalogConfigUpdate,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherStackExists("rancher_stack.catalog", &stack),
@@ -123,7 +123,7 @@ func TestAccRancherStack_disappears(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherStackDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherStackConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherStackExists("rancher_stack.foo", &stack),

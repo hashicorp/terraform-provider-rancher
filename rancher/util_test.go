@@ -69,7 +69,7 @@ type LabelTestCase struct {
 
 var (
 	HostLabelTestCases = []LabelTestCase{
-		LabelTestCase{
+		{
 			Labels: map[string]interface{}{
 				"orch": "true",
 				"etcd": "true",
@@ -77,7 +77,7 @@ var (
 			Command:         "sudo docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.122.158:8080/v1/scripts/71FF294EA7A2B6865708:1483142400000:8OVFmSEUlS2VXvVGbYCXTFaMC8w",
 			ExpectedCommand: "sudo docker run -e CATTLE_HOST_LABELS='etcd=true&orch=true' --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.122.158:8080/v1/scripts/71FF294EA7A2B6865708:1483142400000:8OVFmSEUlS2VXvVGbYCXTFaMC8w",
 		},
-		LabelTestCase{
+		{
 			Labels:          map[string]interface{}{},
 			Command:         "sudo docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.122.158:8080/v1/scripts/71FF294EA7A2B6865708:1483142400000:8OVFmSEUlS2VXvVGbYCXTFaMC8w",
 			ExpectedCommand: "sudo docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.2 http://192.168.122.158:8080/v1/scripts/71FF294EA7A2B6865708:1483142400000:8OVFmSEUlS2VXvVGbYCXTFaMC8w",

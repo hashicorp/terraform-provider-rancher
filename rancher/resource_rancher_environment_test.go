@@ -18,7 +18,7 @@ func TestAccRancherEnvironment_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherEnvironmentDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherEnvironmentConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherEnvironmentExists("rancher_environment.foo", &environment),
@@ -27,7 +27,7 @@ func TestAccRancherEnvironment_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_environment.foo", "orchestration", "cattle"),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherEnvironmentUpdateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherEnvironmentExists("rancher_environment.foo", &environment),
@@ -48,7 +48,7 @@ func TestAccRancherEnvironment_disappears(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherEnvironmentDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherEnvironmentConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherEnvironmentExists("rancher_environment.foo", &environment),
@@ -68,7 +68,7 @@ func TestAccRancherEnvironment_members(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherEnvironmentDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherEnvironmentMembersConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherEnvironmentExists("rancher_environment.foo", &environment),
@@ -78,7 +78,7 @@ func TestAccRancherEnvironment_members(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_environment.foo", "member.#", "2"),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherEnvironmentMembersUpdateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherEnvironmentExists("rancher_environment.foo", &environment),

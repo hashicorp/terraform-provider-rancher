@@ -32,15 +32,15 @@ func resourceRancherEnvironment() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"orchestration": &schema.Schema{
+			"orchestration": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ValidateFunc:  validation.StringInSlice([]string{"cattle", "kubernetes", "mesos", "swarm", "windows"}, true),
@@ -48,18 +48,18 @@ func resourceRancherEnvironment() *schema.Resource {
 				ConflictsWith: []string{"project_template_id"},
 				ForceNew:      true,
 			},
-			"project_template_id": &schema.Schema{
+			"project_template_id": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Computed:      true,
 				ConflictsWith: []string{"orchestration"},
 				ForceNew:      true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"member": &schema.Schema{
+			"member": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Computed: true,

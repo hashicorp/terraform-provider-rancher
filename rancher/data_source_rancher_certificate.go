@@ -15,56 +15,56 @@ func dataSourceRancherCertificate() *schema.Resource {
 		Read: dataSourceRancherCertificateRead,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"cn": &schema.Schema{
+			"cn": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"algorithm": &schema.Schema{
+			"algorithm": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"cert_fingerprint": &schema.Schema{
+			"cert_fingerprint": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"expires_at": &schema.Schema{
+			"expires_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"issued_at": &schema.Schema{
+			"issued_at": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"issuer": &schema.Schema{
+			"issuer": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"key_size": &schema.Schema{
+			"key_size": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"serial_number": &schema.Schema{
+			"serial_number": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"subject_alternative_names": &schema.Schema{
+			"subject_alternative_names": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Computed: true,
 			},
-			"version": &schema.Schema{
+			"version": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

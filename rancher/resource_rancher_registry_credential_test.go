@@ -18,7 +18,7 @@ func TestAccRancherRegistryCredential_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherRegistryCredentialDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryCredentialConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryCredentialExists("rancher_registry_credential.foo", &registry),
@@ -27,7 +27,7 @@ func TestAccRancherRegistryCredential_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_registry_credential.foo", "public_value", "user"),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryCredentialUpdateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryCredentialExists("rancher_registry_credential.foo", &registry),
@@ -48,7 +48,7 @@ func TestAccRancherRegistryCredential_disappears(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherRegistryCredentialDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryCredentialConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryCredentialExists("rancher_registry_credential.foo", &registry),
