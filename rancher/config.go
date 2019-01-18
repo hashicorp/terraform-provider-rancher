@@ -1,6 +1,7 @@
 package rancher
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/rancher/go-rancher/catalog"
@@ -62,6 +63,9 @@ func (c *Config) RegistryClient(id string) (*rancherClient.RancherClient, error)
 	reg, err := client.Registry.ById(id)
 	if err != nil {
 		return nil, err
+	}
+	if reg == nil {
+		return nil, fmt.Errorf("Registry ID %v not found. Check your API key permissions.", id)
 	}
 
 	return c.EnvironmentClient(reg.AccountId)
