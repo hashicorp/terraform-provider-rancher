@@ -42,8 +42,8 @@ func resourceRancherStack() *schema.Resource {
 			},
 			"environment_id": {
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
+				Computed: true,
 			},
 			"docker_compose": {
 				Type:             schema.TypeString,
@@ -92,7 +92,13 @@ func resourceRancherStack() *schema.Resource {
 
 func resourceRancherStackCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating Stack: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return fmt.Errorf("Error getting environment client: %v", err)
 	}
@@ -129,7 +135,13 @@ func resourceRancherStackCreate(d *schema.ResourceData, meta interface{}) error 
 
 func resourceRancherStackRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Stack: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return fmt.Errorf("Error getting environment client: %v", err)
 	}
@@ -196,7 +208,13 @@ func resourceRancherStackRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceRancherStackUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Updating Stack: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return fmt.Errorf("Error getting environment client: %v", err)
 	}
@@ -309,7 +327,14 @@ func resourceRancherStackUpdate(d *schema.ResourceData, meta interface{}) error 
 func resourceRancherStackDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting Stack: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return fmt.Errorf("Error getting environment client: %v", err)
 	}

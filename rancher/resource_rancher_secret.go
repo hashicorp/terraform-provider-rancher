@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
-	rancher "github.com/rancher/go-rancher/v2"
+	rancherClient "github.com/rancher/go-rancher/v2"
 )
 
 func resourceRancherSecret() *schema.Resource {
@@ -37,7 +37,8 @@ func resourceRancherSecret() *schema.Resource {
 			},
 			"environment_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"value": &schema.Schema{
 				Type:     schema.TypeString,
@@ -50,7 +51,13 @@ func resourceRancherSecret() *schema.Resource {
 
 func resourceRancherSecretCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO][rancher] Creating Secret: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -59,7 +66,7 @@ func resourceRancherSecretCreate(d *schema.ResourceData, meta interface{}) error
 	description := d.Get("description").(string)
 	value := d.Get("value").(string)
 
-	secret := rancher.Secret{
+	secret := rancherClient.Secret{
 		Name:        name,
 		Description: description,
 		Value:       base64.StdEncoding.EncodeToString([]byte(value)),
@@ -91,7 +98,13 @@ func resourceRancherSecretCreate(d *schema.ResourceData, meta interface{}) error
 
 func resourceRancherSecretRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Secret: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -111,7 +124,13 @@ func resourceRancherSecretRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceRancherSecretUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Updating Secret: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -131,7 +150,7 @@ func resourceRancherSecretUpdate(d *schema.ResourceData, meta interface{}) error
 		"value":       base64.StdEncoding.EncodeToString([]byte(value)),
 	}
 
-	var newSecret rancher.Secret
+	var newSecret rancherClient.Secret
 	if err := client.Update("secret", &secret.Resource, data, &newSecret); err != nil {
 		return err
 	}
@@ -142,7 +161,13 @@ func resourceRancherSecretUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceRancherSecretDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting Secret: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -198,7 +223,7 @@ func resourceRancherSecretImport(d *schema.ResourceData, meta interface{}) ([]*s
 
 // SecretStateRefreshFunc returns a resource.StateRefreshFunc that is used to watch
 // a Rancher Secret.
-func SecretStateRefreshFunc(client *rancher.RancherClient, secretID string) resource.StateRefreshFunc {
+func SecretStateRefreshFunc(client *rancherClient.RancherClient, secretID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		cert, err := client.Secret.ById(secretID)
 

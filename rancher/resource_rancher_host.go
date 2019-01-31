@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
-	rancher "github.com/rancher/go-rancher/v2"
+	rancherClient "github.com/rancher/go-rancher/v2"
 )
 
 // ro_labels are used internally by Rancher
@@ -41,7 +41,8 @@ func resourceRancherHost() *schema.Resource {
 			},
 			"environment_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"hostname": &schema.Schema{
 				Type:     schema.TypeString,
@@ -58,7 +59,13 @@ func resourceRancherHost() *schema.Resource {
 
 func resourceRancherHostCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO][rancher] Creating Host: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -80,16 +87,16 @@ func resourceRancherHostCreate(d *schema.ResourceData, meta interface{}) error {
 			"Error waiting for host (%s) to be found: %s", hostname, waitErr)
 	}
 
-	d.SetId(host.(rancher.Host).Id)
+	d.SetId(host.(rancherClient.Host).Id)
 
 	return resourceRancherHostUpdate(d, meta)
 }
 
-func findHost(client *rancher.RancherClient, hostname string) resource.StateRefreshFunc {
+func findHost(client *rancherClient.RancherClient, hostname string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 
 		hosts, _ := client.Host.List(NewListOpts())
-		var host rancher.Host
+		var host rancherClient.Host
 
 		for _, h := range hosts.Data {
 			if h.Hostname == hostname {
@@ -104,7 +111,13 @@ func findHost(client *rancher.RancherClient, hostname string) resource.StateRefr
 
 func resourceRancherHostRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Host: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -144,7 +157,13 @@ func resourceRancherHostRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceRancherHostUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Updating Host: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -168,7 +187,7 @@ func resourceRancherHostUpdate(d *schema.ResourceData, meta interface{}) error {
 		"labels":      &labels,
 	}
 
-	var newHost rancher.Host
+	var newHost rancherClient.Host
 	if err := client.Update("host", &host.Resource, data, &newHost); err != nil {
 		return err
 	}
@@ -179,7 +198,13 @@ func resourceRancherHostUpdate(d *schema.ResourceData, meta interface{}) error {
 func resourceRancherHostDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting Host: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -239,7 +264,7 @@ func resourceRancherHostDelete(d *schema.ResourceData, meta interface{}) error {
 
 // HostStateRefreshFunc returns a resource.StateRefreshFunc that is used to watch
 // a Rancher Host.
-func HostStateRefreshFunc(client *rancher.RancherClient, hostID string) resource.StateRefreshFunc {
+func HostStateRefreshFunc(client *rancherClient.RancherClient, hostID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		host, err := client.Host.ById(hostID)
 

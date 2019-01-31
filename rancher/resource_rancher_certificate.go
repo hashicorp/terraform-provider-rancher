@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
-	rancher "github.com/rancher/go-rancher/v2"
+	rancherClient "github.com/rancher/go-rancher/v2"
 )
 
 func resourceRancherCertificate() *schema.Resource {
@@ -35,7 +35,8 @@ func resourceRancherCertificate() *schema.Resource {
 			},
 			"environment_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 			},
 			"cert": &schema.Schema{
 				Type:     schema.TypeString,
@@ -96,7 +97,13 @@ func resourceRancherCertificate() *schema.Resource {
 
 func resourceRancherCertificateCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO][rancher] Creating Certificate: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -107,7 +114,7 @@ func resourceRancherCertificateCreate(d *schema.ResourceData, meta interface{}) 
 	certChain := d.Get("cert_chain").(string)
 	key := d.Get("key").(string)
 
-	certificate := rancher.Certificate{
+	certificate := rancherClient.Certificate{
 		Name:        name,
 		Description: description,
 		Cert:        cert,
@@ -141,7 +148,13 @@ func resourceRancherCertificateCreate(d *schema.ResourceData, meta interface{}) 
 
 func resourceRancherCertificateRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing Certificate: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -173,7 +186,13 @@ func resourceRancherCertificateRead(d *schema.ResourceData, meta interface{}) er
 
 func resourceRancherCertificateUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Updating Certificate: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -197,7 +216,7 @@ func resourceRancherCertificateUpdate(d *schema.ResourceData, meta interface{}) 
 		"key":         &key,
 	}
 
-	var newCertificate rancher.Certificate
+	var newCertificate rancherClient.Certificate
 	if err := client.Update("certificate", &certificate.Resource, data, &newCertificate); err != nil {
 		return err
 	}
@@ -208,7 +227,13 @@ func resourceRancherCertificateUpdate(d *schema.ResourceData, meta interface{}) 
 func resourceRancherCertificateDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting Certificate: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -264,7 +289,7 @@ func resourceRancherCertificateImport(d *schema.ResourceData, meta interface{}) 
 
 // CertificateStateRefreshFunc returns a resource.StateRefreshFunc that is used to watch
 // a Rancher Certificate.
-func CertificateStateRefreshFunc(client *rancher.RancherClient, certificateID string) resource.StateRefreshFunc {
+func CertificateStateRefreshFunc(client *rancherClient.RancherClient, certificateID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
 		cert, err := client.Certificate.ById(certificateID)
 

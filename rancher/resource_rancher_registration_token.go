@@ -37,8 +37,8 @@ func resourceRancherRegistrationToken() *schema.Resource {
 			},
 			"environment_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Optional: true,
+				Computed: true,
 			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
@@ -70,7 +70,13 @@ func resourceRancherRegistrationToken() *schema.Resource {
 
 func resourceRancherRegistrationTokenCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating RegistrationToken: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -110,7 +116,13 @@ func resourceRancherRegistrationTokenCreate(d *schema.ResourceData, meta interfa
 
 func resourceRancherRegistrationTokenRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Refreshing RegistrationToken: %s", d.Id())
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
@@ -150,7 +162,13 @@ func resourceRancherRegistrationTokenRead(d *schema.ResourceData, meta interface
 func resourceRancherRegistrationTokenDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting RegistrationToken: %s", d.Id())
 	id := d.Id()
-	client, err := meta.(*Config).EnvironmentClient(d.Get("environment_id").(string))
+	var client *rancherClient.RancherClient
+	var err error
+	if environmentId := d.Get("environment_id").(string); environmentId != "" {
+		client, err = meta.(*Config).EnvironmentClient(environmentId)
+	} else {
+		client, err = meta.(*Config).GlobalClient()
+	}
 	if err != nil {
 		return err
 	}
