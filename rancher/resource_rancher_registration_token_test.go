@@ -18,7 +18,7 @@ func TestAccRancherRegistrationToken_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherRegistrationTokenDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistrationTokenConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistrationTokenExists("rancher_registration_token.foo", &registrationToken),
@@ -31,7 +31,7 @@ func TestAccRancherRegistrationToken_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet("rancher_registration_token.foo", "token"),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistrationTokenUpdateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistrationTokenExists("rancher_registration_token.foo", &registrationToken),
@@ -56,7 +56,7 @@ func TestAccRancherRegistrationToken_disappears(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherRegistrationTokenDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistrationTokenConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistrationTokenExists("rancher_registration_token.foo", &registrationToken),

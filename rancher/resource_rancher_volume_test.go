@@ -17,7 +17,7 @@ func TestAccRancherVolume_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherVolumeDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherVolumeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherVolumeExists("rancher_volume.foo", &volume),

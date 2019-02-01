@@ -18,7 +18,7 @@ func TestAccRancherRegistry_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherRegistryDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryExists("rancher_registry.foo", &registry),
@@ -27,7 +27,7 @@ func TestAccRancherRegistry_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_registry.foo", "server_address", "http://foo.com:8080"),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryUpdateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryExists("rancher_registry.foo", &registry),
@@ -36,7 +36,7 @@ func TestAccRancherRegistry_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_registry.foo", "server_address", "http://foo.updated.com:8080"),
 				),
 			},
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryRecreateConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryExists("rancher_registry.foo", &registry),
@@ -57,7 +57,7 @@ func TestAccRancherRegistry_disappears(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherRegistryDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherRegistryConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherRegistryExists("rancher_registry.foo", &registry),

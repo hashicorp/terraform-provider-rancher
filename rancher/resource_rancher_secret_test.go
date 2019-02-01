@@ -17,7 +17,7 @@ func TestAccRancherSecret_basic(t *testing.T) {
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckRancherSecretDestroy,
 		Steps: []resource.TestStep{
-			resource.TestStep{
+			{
 				Config: testAccRancherSecretConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRancherSecretExists("rancher_secret.foo", &secret),

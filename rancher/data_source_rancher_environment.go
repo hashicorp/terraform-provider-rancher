@@ -15,23 +15,23 @@ func dataSourceRancherEnvironment() *schema.Resource {
 		Read: dataSourceRancherEnvironmentRead,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"orchestration": &schema.Schema{
+			"orchestration": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"project_template_id": &schema.Schema{
+			"project_template_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"member": &schema.Schema{
+			"member": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
