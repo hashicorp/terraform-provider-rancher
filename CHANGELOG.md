@@ -1,4 +1,20 @@
-## 1.2.2 (Unreleased)
+## 1.3.0 (Unreleased)
+
+FEATURES:
+
+* Prepare provider for Terraform v0.12 ([#96](https://github.com/terraform-providers/terraform-provider-rancher/pull/96))
+
+IMPROVEMENTS:
+
+* Upgrade to GO 1.11 ([#91](https://github.com/terraform-providers/terraform-provider-rancher/pull/91))
+* Switch to Go Modules ([#94](https://github.com/terraform-providers/terraform-provider-rancher/pull/94))
+* Use SVG badge in README ([#95](https://github.com/terraform-providers/terraform-provider-rancher/pull/95))
+
+BUG FIXES:
+
+* Recreate rancher_host resource when hostname changes ([#82](https://github.com/terraform-providers/terraform-provider-rancher/issues/82))
+* Avoid crashing when registry ID cannot be found ([#92](https://github.com/terraform-providers/terraform-provider-rancher/pull/92))
+
 ## 1.2.1 (June 08, 2018)
 
 BUG FIXES:
