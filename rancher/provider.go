@@ -48,6 +48,12 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("RANCHER_CLIENT_CONFIG", ""),
 				Description: descriptions["config"],
 			},
+			"skip_config_validation": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: descriptions["skip_config_validation"],
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -83,6 +89,8 @@ func init() {
 		"api_url": "The URL to the rancher API, must include version uri (ie. v1 or v2-beta)",
 
 		"config": "Path to the Rancher client cli.json config file",
+
+		"skip_config_validation": "Skip the configuration parameters validation.",
 	}
 }
 
@@ -90,6 +98,15 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	apiURL := d.Get("api_url").(string)
 	accessKey := d.Get("access_key").(string)
 	secretKey := d.Get("secret_key").(string)
+
+	if scv := d.Get("skip_config_validation").(bool); scv {
+		config := &Config{
+			APIURL:    apiURL,
+			AccessKey: accessKey,
+			SecretKey: secretKey,
+		}
+		return config, nil
+	}
 
 	if configFile := d.Get("config").(string); configFile != "" {
 		config, err := loadConfig(configFile)
