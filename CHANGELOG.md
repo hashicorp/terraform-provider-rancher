@@ -1,4 +1,9 @@
-## 1.3.1 (Unreleased)
+## 1.4.0 (July 26, 2019)
+
+FEATURES:
+
+* Add option to skip config validation ([#97](https://github.com/terraform-providers/terraform-provider-rancher/pull/97))
+
 ## 1.3.0 (June 04, 2019)
 
 FEATURES:
