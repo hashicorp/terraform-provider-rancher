@@ -1,4 +1,9 @@
 ## 1.4.1 (Unreleased)
+
+IMPROVEMENTS:
+
+* Use new Terraform plugin SDK ([#100](https://github.com/terraform-providers/terraform-provider-rancher/pull/100))
+
 ## 1.4.0 (July 26, 2019)
 
 FEATURES:
