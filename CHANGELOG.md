@@ -3,6 +3,7 @@
 IMPROVEMENTS:
 
 * Use new Terraform plugin SDK ([#100](https://github.com/terraform-providers/terraform-provider-rancher/pull/100))
+* Paginate list actions ([#102](https://github.com/terraform-providers/terraform-provider-rancher/pull/102))
 
 ## 1.4.0 (July 26, 2019)
 
