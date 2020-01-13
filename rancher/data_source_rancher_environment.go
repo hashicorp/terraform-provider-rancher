@@ -109,9 +109,22 @@ func findEnv(client *rancher.RancherClient, envname string) resource.StateRefres
 			return nil, "", err
 		}
 
-		for _, env := range envs.Data {
-			if env.Name == envname {
-				return env, env.State, nil
+		for true {
+			for _, env := range envs.Data {
+				if env.Name == envname {
+					log.Printf("[INFO] Found environment %s with state %s", env.Name, env.State)
+					return env, env.State, nil
+				}
+			}
+
+			envs, err = envs.Next()
+			if err != nil {
+				return nil, "", err
+			}
+
+			if envs == nil {
+				log.Printf("[INFO] Environment %s not found", envname)
+				break
 			}
 		}
 
