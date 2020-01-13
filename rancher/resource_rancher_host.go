@@ -83,14 +83,27 @@ func resourceRancherHostCreate(d *schema.ResourceData, meta interface{}) error {
 
 func findHost(client *rancher.RancherClient, hostname string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
+		hosts, err := client.Host.List(NewListOpts())
+		if err != nil {
+			return nil, "", err
+		}
 
-		hosts, _ := client.Host.List(NewListOpts())
-		var host rancher.Host
+		for true {
+			for _, h := range hosts.Data {
+				if h.Hostname == hostname {
+					log.Printf("[INFO] Found host %s with state %s", h.Hostname, h.State)
+					return h, h.State, nil
+				}
+			}
 
-		for _, h := range hosts.Data {
-			if h.Hostname == hostname {
-				host = h
-				return host, host.State, nil
+			hosts, err = hosts.Next()
+			if err != nil {
+				return nil, "", err
+			}
+
+			if hosts == nil {
+				log.Printf("[INFO] Host %s not found", hostname)
+				break
 			}
 		}
 
