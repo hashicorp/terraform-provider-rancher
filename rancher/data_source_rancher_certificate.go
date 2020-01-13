@@ -124,9 +124,22 @@ func findCert(client *rancher.RancherClient, certname string) resource.StateRefr
 			return nil, "", err
 		}
 
-		for _, cert := range certs.Data {
-			if cert.Name == certname {
-				return cert, cert.State, nil
+		for true {
+			for _, cert := range certs.Data {
+				if cert.Name == certname {
+					log.Printf("[INFO] Found certificate %s with state %s", cert.Name, cert.State)
+					return cert, cert.State, nil
+				}
+			}
+
+			certs, err = certs.Next()
+			if err != nil {
+				return nil, "", err
+			}
+
+			if certs == nil {
+				log.Printf("[INFO] Certificate %s not found", certname)
+				break
 			}
 		}
 
