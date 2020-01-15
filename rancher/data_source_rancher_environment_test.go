@@ -14,7 +14,7 @@ func TestAccRancherEnvironmentDataSource_foo(t *testing.T) {
 			{
 				Config: testAccCheckRancherEnvironmentDataSourceConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("data.rancher_environment.foo", "orchestration", "cattle"),
+					resource.TestCheckResourceAttr("data.rancher_environment.default", "orchestration", "cattle"),
 				),
 			},
 		},
@@ -24,6 +24,6 @@ func TestAccRancherEnvironmentDataSource_foo(t *testing.T) {
 // Testing owner parameter
 const testAccCheckRancherEnvironmentDataSourceConfig = `
 data "rancher_environment" "default" {
-	name = "default"
+	name = "Default"
 }
 `
