@@ -96,5 +96,6 @@ resource "rancher_volume" "foo" {
 	name = "foo"
 	description = "Terraform acc test group"
 	environment_id = "${rancher_environment.foo.id}"
+	driver = "local"
 }
 `
