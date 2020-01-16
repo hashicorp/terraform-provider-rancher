@@ -17,13 +17,12 @@ func TestAccRancherSecret_importBasic(t *testing.T) {
 			{
 				Config: testAccRancherSecretConfig,
 			},
-
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"secret_value"},
+					"value"},
 			},
 		},
 	})
