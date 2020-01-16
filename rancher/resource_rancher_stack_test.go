@@ -25,8 +25,8 @@ func TestAccRancherStack_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_stack.foo", "name", "foo"),
 					resource.TestCheckResourceAttr("rancher_stack.foo", "description", "Terraform acc test group"),
 					resource.TestCheckResourceAttr("rancher_stack.foo", "catalog_id", ""),
-					resource.TestCheckResourceAttr("rancher_stack.foo", "docker_compose", ""),
-					resource.TestCheckResourceAttr("rancher_stack.foo", "rancher_compose", ""),
+					resource.TestCheckResourceAttr("rancher_stack.foo", "docker_compose", "version: '2'\n"),
+					resource.TestCheckResourceAttr("rancher_stack.foo", "rancher_compose", "version: '2'\n"),
 					testAccCheckRancherStackAttributes(&stack, emptyEnvironment, false),
 				),
 			},
@@ -37,8 +37,8 @@ func TestAccRancherStack_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_stack.foo", "name", "foo2"),
 					resource.TestCheckResourceAttr("rancher_stack.foo", "description", "Terraform acc test group - updated"),
 					resource.TestCheckResourceAttr("rancher_stack.foo", "catalog_id", ""),
-					resource.TestCheckResourceAttr("rancher_stack.foo", "docker_compose", ""),
-					resource.TestCheckResourceAttr("rancher_stack.foo", "rancher_compose", ""),
+					resource.TestCheckResourceAttr("rancher_stack.foo", "docker_compose", "version: '2'\n"),
+					resource.TestCheckResourceAttr("rancher_stack.foo", "rancher_compose", "version: '2'\n"),
 					testAccCheckRancherStackAttributes(&stack, emptyEnvironment, false),
 				),
 			},
@@ -253,6 +253,8 @@ resource "rancher_stack" "foo" {
 	name = "foo"
 	description = "Terraform acc test group"
 	environment_id = "${rancher_environment.foo.id}"
+	docker_compose = "version: '2'\n"
+	rancher_compose = "version: '2'\n"
 }
 `
 
@@ -266,6 +268,8 @@ resource "rancher_stack" "foo" {
 	name = "foo2"
 	description = "Terraform acc test group - updated"
 	environment_id = "${rancher_environment.foo.id}"
+	docker_compose = "version: '2'\n"
+	rancher_compose = "version: '2'\n"
 }
 `
 
