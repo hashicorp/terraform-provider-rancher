@@ -97,6 +97,10 @@ func resourceRancherSecretRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	if secret == nil {
+		return fmt.Errorf("Failed to find secret %s", d.Id())
+	}
+
 	log.Printf("[INFO] Secret Name: %s", secret.Name)
 
 	d.Set("description", secret.Description)
@@ -183,11 +187,11 @@ func resourceRancherSecretImport(d *schema.ResourceData, meta interface{}) ([]*s
 		if err != nil {
 			return []*schema.ResourceData{}, err
 		}
-		stack, err := client.Stack.ById(d.Id())
+		sec, err := client.Secret.ById(d.Id())
 		if err != nil {
 			return []*schema.ResourceData{}, err
 		}
-		d.Set("environment_id", stack.AccountId)
+		d.Set("environment_id", sec.AccountId)
 	}
 	return []*schema.ResourceData{d}, nil
 }
