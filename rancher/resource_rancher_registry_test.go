@@ -223,6 +223,7 @@ const testAccRancherRegistryRecreateConfig = `
  resource "rancher_environment" "foo_registry2" {
    name = "alternative registry test"
    description = "other environment to test registries"
+   orchestration = "cattle"
  }
 
  resource "rancher_registry" "foo" {
