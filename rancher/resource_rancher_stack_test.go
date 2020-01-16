@@ -61,8 +61,8 @@ func TestAccRancherStack_compose(t *testing.T) {
 					resource.TestCheckResourceAttr("rancher_stack.compose", "name", "compose"),
 					resource.TestCheckResourceAttr("rancher_stack.compose", "description", "Terraform acc test group - compose"),
 					resource.TestCheckResourceAttr("rancher_stack.compose", "catalog_id", ""),
-					resource.TestCheckResourceAttr("rancher_stack.compose", "docker_compose", "web: { image: nginx }"),
-					resource.TestCheckResourceAttr("rancher_stack.compose", "rancher_compose", "web: { scale: 1 }"),
+					resource.TestCheckResourceAttr("rancher_stack.compose", "docker_compose", "version: '2'\nservices:\n  web:\n    image: nginx\n"),
+					resource.TestCheckResourceAttr("rancher_stack.compose", "rancher_compose", "version: '2'\nservices:\n  web:\n    scale: 1\n    start_on_create: true\n"),
 					testAccCheckRancherStackAttributes(&stack, emptyEnvironment, false),
 				),
 			},
@@ -283,8 +283,19 @@ resource "rancher_stack" "compose" {
 	name = "compose"
 	description = "Terraform acc test group - compose"
 	environment_id = "${rancher_environment.foo.id}"
-	docker_compose = "web: { image: nginx }"
-	rancher_compose = "web: { scale: 1 }"
+	docker_compose = <<EOT
+version: '2'
+services:
+  web:
+    image: nginx
+EOT
+	rancher_compose = <<EOT
+version: '2'
+services:
+  web:
+    scale: 1
+	start_on_create: true
+EOT
 }
 `
 
@@ -296,7 +307,7 @@ resource "rancher_stack" "catalog" {
 	catalog_id = "community:janitor:0"
 	scope = "system"
 	start_on_create = true
-	environment {
+	environment = {
 		EXCLUDE_LABEL = "cleanup=false"
 		FREQUENCY = "60"
 		KEEP = "rancher/agent:*"
@@ -311,7 +322,7 @@ resource "rancher_stack" "catalog" {
 	environment_id = "1a5"
 	catalog_id = "community:janitor:1"
 	scope = "user"
-	environment {
+	environment = {
 		EXCLUDE_LABEL = "cleanup=false"
 		FREQUENCY = "60"
 		KEEP = "rancher/agent:*"
@@ -320,43 +331,53 @@ resource "rancher_stack" "catalog" {
 }
 `
 
-var catalogDockerComposeInitial = `cleanup:
-  environment:
-    CLEAN_PERIOD: '60'
-    DELAY_TIME: '900'
-    KEEP_IMAGES: rancher/agent:*
-  labels:
-    io.rancher.scheduler.global: 'true'
-    io.rancher.scheduler.affinity:host_label_ne: cleanup=false
-  tty: true
-  image: meltwater/docker-cleanup:1.4.0
-  privileged: true
-  volumes:
-  - /var/run/docker.sock:/var/run/docker.sock
-  - /var/lib/docker:/var/lib/docker
-  stdin_open: true
+var catalogDockerComposeInitial = `version: '2'
+services:
+  cleanup:
+    privileged: true
+    image: meltwater/docker-cleanup:1.4.0
+    environment:
+      CLEAN_PERIOD: '60'
+      DELAY_TIME: '900'
+      KEEP_IMAGES: rancher/agent:*
+    stdin_open: true
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /var/lib/docker:/var/lib/docker
+    tty: true
+    labels:
+      io.rancher.scheduler.affinity:host_label_ne: cleanup=false
+      io.rancher.scheduler.global: 'true'
 `
 
-const catalogRancherComposeInitial = `{}
+const catalogRancherComposeInitial = `version: '2'
+services:
+  cleanup:
+    start_on_create: true
 `
 
-const catalogDockerComposeUpdate = `cleanup:
-  environment:
-    CLEAN_PERIOD: '60'
-    DELAY_TIME: '900'
-    KEEP_CONTAINERS: '*:*'
-    KEEP_IMAGES: rancher/agent:*
-  labels:
-    io.rancher.scheduler.global: 'true'
-    io.rancher.scheduler.affinity:host_label_ne: cleanup=false
-  image: sshipway/docker-cleanup:1.5.2
-  volumes:
-  - /var/run/docker.sock:/var/run/docker.sock
-  - /var/lib/docker:/var/lib/docker
-  net: none
+const catalogDockerComposeUpdate = `version: '2'
+services:
+  cleanup:
+    image: sshipway/docker-cleanup:1.5.2
+    environment:
+      CLEAN_PERIOD: '60'
+      DELAY_TIME: '900'
+      KEEP_CONTAINERS: '*:*'
+      KEEP_IMAGES: rancher/agent:*
+    network_mode: none
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /var/lib/docker:/var/lib/docker
+    labels:
+      io.rancher.scheduler.affinity:host_label_ne: cleanup=false
+      io.rancher.scheduler.global: 'true'
 `
 
-const catalogRancherComposeUpdate = `{}
+const catalogRancherComposeUpdate = `version: '2'
+services:
+  cleanup:
+    start_on_create: true
 `
 
 var emptyEnvironment = map[string]string{}
