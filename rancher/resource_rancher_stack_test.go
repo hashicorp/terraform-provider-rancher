@@ -253,8 +253,12 @@ resource "rancher_stack" "foo" {
 	name = "foo"
 	description = "Terraform acc test group"
 	environment_id = "${rancher_environment.foo.id}"
-	docker_compose = "version: '2'\n"
-	rancher_compose = "version: '2'\n"
+	docker_compose = <<EOT
+version: '2'
+EOT
+	rancher_compose = <<EOT
+version: '2'
+EOT
 }
 `
 
@@ -268,8 +272,12 @@ resource "rancher_stack" "foo" {
 	name = "foo2"
 	description = "Terraform acc test group - updated"
 	environment_id = "${rancher_environment.foo.id}"
-	docker_compose = "version: '2'\n"
-	rancher_compose = "version: '2'\n"
+	docker_compose = <<EOT
+version: '2'
+EOT
+	rancher_compose = <<EOT
+version: '2'
+EOT
 }
 `
 
