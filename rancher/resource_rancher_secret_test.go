@@ -87,15 +87,10 @@ func testAccCheckRancherSecretDestroy(s *terraform.State) error {
 }
 
 const testAccRancherSecretConfig = `
-resource "rancher_environment" "foo" {
-	name = "foo"
-	orchestration = "cattle"
-}
-
 resource "rancher_secret" "foo" {
 	name = "foo"
 	description = "Terraform acc test group"
-	environment_id = "${rancher_environment.foo.id}"
+	environment_id = "1a5"
 	value = "mypasswd"
 }
 `
