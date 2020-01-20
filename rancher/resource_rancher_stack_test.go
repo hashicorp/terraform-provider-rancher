@@ -302,7 +302,7 @@ version: '2'
 services:
   web:
     scale: 1
-	start_on_create: true
+    start_on_create: true
 EOT
 }
 `
