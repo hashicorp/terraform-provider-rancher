@@ -71,6 +71,27 @@ func (c *Config) RegistryClient(id string) (*rancherClient.RancherClient, error)
 	return c.EnvironmentClient(reg.AccountId)
 }
 
+// ApiKeyClient creates a Rancher client scoped to a Registry's API
+func (c *Config) ApiKeyClient(id string) (*rancherClient.RancherClient, error) {
+	client, err := c.GlobalClient()
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := client.Account.ById(id)
+	if err != nil {
+		return nil, err
+	}
+	accountURL := account.Links["self"]
+	log.Printf("[INFO] Rancher Client configured for url: %s", accountURL)
+	return rancherClient.NewRancherClient(&rancherClient.ClientOpts{
+		// Url:       c.APIURL,
+		Url:       accountURL,
+		AccessKey: c.AccessKey,
+		SecretKey: c.SecretKey,
+	})
+}
+
 // CatalogClient creates a Rancher client scoped to a Catalog's API
 func (c *Config) CatalogClient() (*catalog.RancherClient, error) {
 	return catalog.NewRancherClient(&catalog.ClientOpts{
